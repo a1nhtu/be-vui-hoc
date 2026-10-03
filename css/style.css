@@ -244,3 +244,29 @@ input:not([type=checkbox]), select { font: inherit; padding: 10px 12px; border-r
 @media (prefers-reduced-motion: reduce) {
   .mascot, .r-mascot, .listen, .confetti i { animation: none; }
 }
+
+/* Bảng xếp hạng & đồng bộ */
+.board { display: flex; flex-direction: column; gap: 10px; }
+.lb-sub { color: var(--soft); text-align: center; }
+.lb { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lb li { display: flex; align-items: center; gap: 10px; background: #fff; border: 2px solid var(--line); border-radius: 18px; padding: 8px 14px; box-shadow: 0 4px 0 var(--line); }
+.lb li.me { border-color: var(--accent); background: #fff8e6; box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 70%, #000); }
+.lb li.gap { justify-content: center; background: none; border: 0; box-shadow: none; color: var(--soft); padding: 0; }
+.lb .pos { width: 36px; text-align: center; font-weight: 800; font-size: 1.3rem; flex: none; }
+.lb .av { font-size: 2rem; flex: none; }
+.lb .who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.lb .who b { font-size: 1.15rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb .who small { color: var(--soft); }
+.lb .pts { font-weight: 800; font-size: 1.3rem; color: #c77700; flex: none; }
+.lb .pts::before { content: '🏅 '; font-size: 1rem; }
+.pubopt { display: flex; align-items: center; gap: 8px; font-size: 1rem !important; font-weight: 500 !important; color: var(--soft); }
+.pubopt input { width: 22px; height: 22px; accent-color: var(--accent); }
+.link { background: none; color: var(--soft); text-decoration: underline; font-size: 1rem; padding: 8px; min-height: 44px; }
+.k-row .k-pub { flex: none; white-space: nowrap; }
+.hint { color: var(--soft); font-size: .9rem; }
+.fam { font-family: ui-monospace, monospace; font-size: 1.4rem; letter-spacing: 2px; background: #fff8e6; padding: 2px 10px; border-radius: 10px; user-select: all; }
+.sync-st { color: var(--soft); }
+.err { color: var(--bad); min-height: 1.2em; }
+.parent label .row { justify-content: flex-start; flex-wrap: nowrap; }
+.parent label .row input { flex: 1; min-width: 0; text-transform: uppercase; }
+.sheet input#j-code { text-transform: uppercase; text-align: center; }

@@ -9,8 +9,10 @@
   const KEY = 'bevuihoc_v1';
   const AVATARS = ['🐰', '🐻', '🐱', '🐶', '🦊', '🐼', '🐯', '🦄', '🐸', '🐵'];
   // Mỗi bé một hồ sơ riêng: sao, điểm cao nhất, số lần chơi và sticker
-  const newKid = (name, avatar) => ({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, avatar, stars: {}, scores: {}, plays: {}, stickers: [] });
-  const DEFAULTS = { kids: [], cur: '', limit: 20, voice: true, unlockAll: false };
+  // pub: hiện tên trên bảng xếp hạng chung; u, ep: mốc để gộp dữ liệu giữa các máy (xem js/merge.js)
+  const newKid = (name, avatar, pub = true) => ({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, avatar, pub, u: Date.now(), ep: 0, stars: {}, scores: {}, plays: {}, stickers: [] });
+  // fam: mã gia đình để đồng bộ; gone: hồ sơ đã xoá; rankSent: bản điểm đã gửi lên bảng xếp hạng
+  const DEFAULTS = { kids: [], cur: '', limit: 20, voice: true, unlockAll: false, fam: '', gone: [], rankSent: {} };
   let S = { ...DEFAULTS };
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || '{}');
@@ -27,7 +29,8 @@
       delete S.stars; delete S.stickers; delete S.name;
     }
   } catch (e) { /* chế độ riêng tư: chơi không lưu */ }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* bỏ qua */ } };
+  const store = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* bỏ qua */ } };
+  const save = () => { store(); syncSoon(); rankSoon(); };
   const GUEST = newKid('', '🐼');
   const K = () => S.kids.find(k => k.id === S.cur) || S.kids[0] || GUEST;
   const kid = () => K().name.trim() || 'bé';
@@ -125,14 +128,92 @@
   const unlocked = (s, i) => S.unlockAll || i === 0 || starsOf(s.lessons[i - 1].id) > 0;
   const starRow = n => '<span class="stars">' + [1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}">★</i>`).join('') + '</span>';
 
+  /* ---------- Đồng bộ giữa các máy & bảng xếp hạng chung ---------- */
+  const post = (url, body) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    .then(r => r.json().catch(() => ({})).then(j => { if (!r.ok) { const e = new Error(j.error || r.status); e.status = r.status; throw e; } return j; }));
+  const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const newCode = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), b => CODE_ABC[b % 32]).join('');
+  const showCode = c => c.slice(0, 5) + '-' + c.slice(5);
+  const readCode = c => { const s = String(c || '').toUpperCase().replace(/[\s-]/g, ''); return /^[A-Z0-9]{10}$/.test(s) ? s : ''; };
+  const net = { state: '', at: 0 };
+  let syncTimer = 0, syncing = null, syncAgain = false;
+  function syncSoon(ms = 2000) { if (!S.fam) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow().catch(() => { }), ms); }
+  // Gửi bản trên máy lên, nhận bản đã gộp về; điểm học khi mất mạng vẫn nằm trên máy và được gửi ở lần sau
+  function syncNow() {
+    if (!S.fam) return Promise.resolve(null);
+    if (syncing) { syncAgain = true; return syncing; }
+    const code = S.fam;
+    net.state = 'busy'; syncStatus();
+    syncing = post('api/sync', { code, data: { kids: S.kids, gone: S.gone } }).then(j => {
+      if (S.fam !== code) return j;
+      const before = JSON.stringify(S.kids);
+      const m = BVHMerge.merge({ kids: S.kids, gone: S.gone }, j.data);
+      S.kids = m.kids; S.gone = m.gone;
+      if (!S.kids.some(k => k.id === S.cur)) S.cur = S.kids[0] ? S.kids[0].id : '';
+      store();
+      net.state = 'ok'; net.at = Date.now();
+      if (JSON.stringify(S.kids) !== before) { rankSoon(); if (screen) screen(); }
+      return j;
+    }, e => { net.state = e.status === 503 ? 'off' : 'err'; throw e; }).finally(() => {
+      syncing = null; syncStatus();
+      if (syncAgain) { syncAgain = false; syncSoon(500); }
+    });
+    return syncing;
+  }
+  const syncText = () => ({
+    busy: '⏳ Đang đồng bộ…',
+    ok: '✅ Đã đồng bộ lúc ' + new Date(net.at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+    off: '⚠️ Máy chủ chưa bật kho dữ liệu. Điểm vẫn lưu trên máy này và sẽ tự gửi lên khi kho sẵn sàng.',
+    err: '⚠️ Chưa đồng bộ được (có thể đang mất mạng). Điểm vẫn lưu trên máy, sẽ tự thử lại.'
+  }[net.state] || 'Chưa đồng bộ lần nào.');
+  function syncStatus() { const el = document.getElementById('sync-st'); if (el) el.textContent = syncText(); }
+  // Nối máy này vào gia đình có sẵn: chỉ nhận mã đã có trên máy chủ
+  function joinFamily(raw) {
+    const code = readCode(raw);
+    if (!code) return Promise.reject(new Error('Mã gồm 10 chữ và số, ví dụ ABCDE-23456.'));
+    const old = S.fam;
+    return post('api/sync', { code, join: true, data: { kids: [], gone: [] } }).then(j => {
+      if (j.isNew) throw new Error('Chưa có gia đình nào dùng mã này, bố mẹ xem lại giúp nhé.');
+      S.fam = code; store();
+      return syncNow();
+    }, e => {
+      throw new Error(e.status === 503 ? 'Máy chủ chưa bật kho dữ liệu nên chưa kết nối được.' : 'Chưa kết nối được, bố mẹ kiểm tra mạng rồi thử lại nhé.');
+    }).catch(e => { S.fam = old; store(); throw e; });
+  }
+
+  // Gửi tổng điểm của các bé được phép hiện tên; bé tắt lựa chọn hoặc đã xoá thì gỡ khỏi bảng
+  let rankTimer = 0, ranking = null;
+  function rankSoon(ms = 1500) { clearTimeout(rankTimer); rankTimer = setTimeout(pushRank, ms); }
+  function pushRank() {
+    if (ranking) return ranking;
+    ranking = (async () => {
+      const want = {};
+      for (const k of S.kids) {
+        const lessons = Object.keys(k.scores).length;
+        if (k.pub !== false && k.name.trim() && lessons) want[k.id] = { name: k.name.trim(), avatar: k.avatar, score: totalScore(k), stars: totalStars(k), lessons };
+      }
+      for (const id of Object.keys(S.rankSent)) if (!want[id]) {
+        await post('api/rank', { action: 'remove', id });
+        delete S.rankSent[id]; store();
+      }
+      for (const id in want) {
+        const sig = JSON.stringify(want[id]);
+        if (S.rankSent[id] === sig) continue;
+        await post('api/rank', { action: 'save', id, ...want[id] });
+        S.rankSent[id] = sig; store();
+      }
+    })().catch(() => { /* mất mạng hoặc chưa có kho: lần sau gửi tiếp */ }).finally(() => { ranking = null; });
+    return ranking;
+  }
+
   /* ---------- Màn hình chính ---------- */
-  let timers = [];
+  let timers = [], screen = null;   // screen: màn hình cần vẽ lại khi nhận dữ liệu mới từ máy khác
   const later = (fn, ms) => { timers.push(setTimeout(fn, ms)); };
-  function clearScreen() { timers.forEach(clearTimeout); timers = []; stopSpeak(); }
+  function clearScreen() { timers.forEach(clearTimeout); timers = []; stopSpeak(); screen = null; }
 
   function home() {
     if (!S.kids.length) return kidForm(true);
-    clearScreen();
+    clearScreen(); screen = home;
     document.body.style.setProperty('--accent', '#ffb703');
     app.innerHTML = `
       <header class="hero">
@@ -154,6 +235,7 @@
           </button>`).join('')}
       </main>
       <footer class="dock">
+        <button class="btn ghost" id="board">🏆 Bảng xếp hạng</button>
         <button class="btn ghost" id="stickers">🎁 Sticker của bé (${K().stickers.length})</button>
         <button class="btn ghost" id="parent">👨‍👩‍👧 Góc bố mẹ</button>
       </footer>
@@ -163,13 +245,14 @@
     $('#mascot').onclick = () => speak([[SAY.hello, 'vi']]);
     $('#kid').onclick = kids;
     $$('.subject').forEach(b => b.onclick = () => subject(b.dataset.s));
+    $('#board').onclick = board;
     $('#stickers').onclick = stickerBook;
     $('#parent').onclick = () => gate(parent);
   }
 
   // Chọn bé đang học
   function kids() {
-    clearScreen();
+    clearScreen(); screen = kids;
     document.body.style.setProperty('--accent', '#ffb703');
     app.innerHTML = `
       <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>Ai đang học nào?</h2><span></span></header>
@@ -197,16 +280,30 @@
         <input id="k-name" maxlength="20" placeholder="Ví dụ: Su" autocomplete="off">
         <p>Bé chọn một bạn đồng hành</p>
         <div class="avatars">${AVATARS.map(a => `<button class="avatar ${a === avatar ? 'on' : ''}" data-a="${a}">${a}</button>`).join('')}</div>
+        <label class="pubopt"><input type="checkbox" id="k-pub" checked> Hiện tên bé trên bảng xếp hạng chung</label>
         <button class="btn big" id="k-ok">Bắt đầu học →</button>
+        ${first ? '<button class="link" id="k-join">📲 Nhà mình đã dùng app trên máy khác? Nhập mã gia đình</button>' : ''}
       </main>`;
     if (!first) $('#back').onclick = kids;
     $$('.avatar').forEach(b => b.onclick = () => { avatar = b.dataset.a; $$('.avatar').forEach(x => x.classList.toggle('on', x === b)); });
     const ok = () => {
       const name = $('#k-name').value.trim();
       if (!name) { shake($('#k-name')); $('#k-name').focus(); return; }
-      const k = newKid(name, avatar);
+      const k = newKid(name, avatar, $('#k-pub').checked);
       S.kids.push(k); S.cur = k.id; save(); home();
     };
+    if (first) $('#k-join').onclick = () => gate(() => {
+      const m = modal(`<h2>Nhập mã gia đình</h2><p>Mã nằm ở máy kia: Góc bố mẹ → Đồng bộ giữa các máy.</p>
+        <input id="j-code" maxlength="12" placeholder="ABCDE-23456" autocomplete="off" autocapitalize="characters" aria-label="Mã gia đình">
+        <p class="err" id="j-err"></p>
+        <div class="row"><button class="btn ghost" id="j-no">Huỷ</button><button class="btn" id="j-ok">Kết nối</button></div>`);
+      $('#j-no', m).onclick = () => m.remove();
+      $('#j-ok', m).onclick = () => {
+        $('#j-ok', m).disabled = true; $('#j-err', m).textContent = '⏳ Đang kết nối…';
+        joinFamily($('#j-code', m).value).then(() => { m.remove(); home(); }, e => { $('#j-ok', m).disabled = false; $('#j-err', m).textContent = e.message; });
+      };
+      $('#j-code', m).focus();
+    });
     $('#k-ok').onclick = ok;
     $('#k-name').onkeydown = e => { if (e.key === 'Enter') ok(); };
   }
@@ -514,6 +611,36 @@
     $('#back').onclick = home;
   }
 
+  /* ---------- Bảng xếp hạng ---------- */
+  const medal = r => ['🥇', '🥈', '🥉'][r - 1] || r;
+  const lbRow = (r, me) => `<li class="${me ? 'me' : ''}"><span class="pos">${medal(r.rank)}</span><span class="av">${esc(r.avatar)}</span>
+    <span class="who"><b>${esc(r.name)}</b><small>★ ${r.stars} · ${r.lessons} bài</small></span><span class="pts">${r.score}</span></li>`;
+  function board() {
+    clearScreen();
+    document.body.style.setProperty('--accent', '#ffb703');
+    app.innerHTML = `
+      <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>🏆 Bảng xếp hạng</h2><span></span></header>
+      <main class="board" id="lb"><p class="note">⏳ Đang tải bảng xếp hạng…</p></main>`;
+    $('#back').onclick = home;
+    const box = $('#lb');
+    const hidden = S.kids.filter(k => k.pub === false);
+    const tip = hidden.length ? `<p class="note">${hidden.map(k => esc(k.name.trim() || 'Bé')).join(', ')} đang ẩn tên. Bố mẹ bật ô 🏆 trong Góc bố mẹ để bé lên bảng.</p>` : '';
+    // Gửi điểm mới nhất của các bé trên máy này trước rồi mới tải bảng
+    pushRank().then(() => post('api/rank', { action: 'list', mine: S.kids.map(k => k.id).slice(0, 10) })).then(j => {
+      if (!box.isConnected) return;
+      box.innerHTML = j.top.length ? `
+        <p class="lb-sub">Top ${j.top.length} trong ${j.total} bé · xếp theo tổng điểm</p>
+        <ol class="lb">${j.top.map(r => lbRow(r, r.me)).join('')}${j.others.length ? '<li class="gap">⋯</li>' + j.others.map(r => lbRow(r, true)).join('') : ''}</ol>${tip}`
+        : `<p class="note">Chưa có bé nào trên bảng. Học xong một bài là bé có tên ở đây!</p>${tip}`;
+    }).catch(() => {
+      if (!box.isConnected) return;
+      const local = S.kids.map(k => ({ name: k.name.trim() || 'Bé', avatar: k.avatar, score: totalScore(k), stars: totalStars(k), lessons: Object.keys(k.scores).length, cur: k.id === K().id }))
+        .sort((a, b) => b.score - a.score).map((r, i) => ({ ...r, rank: i + 1 }));
+      box.innerHTML = `<p class="lb-sub">Chưa tải được bảng xếp hạng chung (mất mạng hoặc máy chủ chưa sẵn sàng). Đây là các bé trên máy này:</p>
+        <ol class="lb">${local.map(r => lbRow(r, r.cur)).join('')}</ol>`;
+    });
+  }
+
   /* ---------- Góc bố mẹ ---------- */
   function modal(html) {
     const m = document.createElement('div');
@@ -554,9 +681,25 @@
           ${S.kids.map(k => `<div class="k-row" data-id="${k.id}">
             <span class="av">${k.avatar}</span>
             <input class="k-name" maxlength="20" value="${esc(k.name)}" aria-label="Tên bé">
+            <label class="check k-pub" title="Hiện tên trên bảng xếp hạng chung"><input type="checkbox" ${k.pub !== false ? 'checked' : ''}> 🏆</label>
             <button class="btn danger sm k-del" aria-label="Xoá hồ sơ ${esc(k.name)}">Xoá</button>
           </div>`).join('')}
+          <p class="hint">Ô 🏆: hiện tên bé trên bảng xếp hạng chung. Bảng chỉ ghi tên, hình con vật và điểm, không ghi gì khác.</p>
           <button class="btn ghost" id="k-add">＋ Thêm bé</button>
+        </section>
+        <section>
+          <h3>Đồng bộ giữa các máy</h3>
+          ${S.fam ? `
+            <p>Mã gia đình: <b class="fam">${showCode(S.fam)}</b></p>
+            <p>Ở máy khác (điện thoại, máy tính bảng…), vào Góc bố mẹ và nhập mã này để dùng chung hồ sơ, sao và điểm của các bé. Giữ mã trong nhà, ai có mã cũng xem và sửa được điểm.</p>
+            <p class="sync-st" id="sync-st"></p>
+            <div class="row"><button class="btn ghost" id="s-now">↻ Đồng bộ ngay</button><button class="btn ghost" id="s-off">Ngắt máy này</button></div>` : `
+            <p>Bé học trên nhiều máy? Tạo một mã gia đình ở máy này rồi nhập mã đó ở các máy khác: điểm của bé sẽ tự cộng dồn, học lúc mất mạng thì có mạng lại sẽ tự gửi lên.</p>
+            <button class="btn" id="s-new">Tạo mã gia đình</button>
+            <label>Hoặc nhập mã từ máy khác
+              <span class="row"><input id="s-code" maxlength="12" placeholder="ABCDE-23456" autocomplete="off" autocapitalize="characters"><button class="btn" id="s-join">Kết nối</button></span>
+            </label>
+            <p class="err" id="s-err"></p>`}
         </section>
         <section>
           <h3>Bảng điểm</h3>
@@ -596,15 +739,32 @@
     $('#back').onclick = home;
     $$('.k-row').forEach(row => {
       const k = S.kids.find(x => x.id === row.dataset.id);
-      $('.k-name', row).oninput = e => { k.name = e.target.value; save(); };
+      $('.k-name', row).oninput = e => { k.name = e.target.value; k.u = Date.now(); save(); };
+      $('.k-pub input', row).onchange = e => { k.pub = e.target.checked; k.u = Date.now(); save(); };
       $('.k-del', row).onclick = () => {
         const m = modal(`<h2>Xoá hồ sơ của ${esc(k.name.trim() || 'bé')}?</h2><p>Toàn bộ sao, điểm và sticker của bé sẽ mất, không khôi phục được.</p>
           <div class="row"><button class="btn ghost" id="d-no">Giữ lại</button><button class="btn danger" id="d-yes">Xoá</button></div>`);
         $('#d-no', m).onclick = () => m.remove();
-        $('#d-yes', m).onclick = () => { S.kids = S.kids.filter(x => x !== k); if (S.cur === k.id) S.cur = S.kids[0] ? S.kids[0].id : ''; save(); m.remove(); S.kids.length ? parent() : home(); };
+        $('#d-yes', m).onclick = () => { S.kids = S.kids.filter(x => x !== k); S.gone.push(k.id); if (S.cur === k.id) S.cur = S.kids[0] ? S.kids[0].id : ''; save(); m.remove(); S.kids.length ? parent() : home(); };
       };
     });
     $('#k-add').onclick = () => kidForm(false);
+    if (S.fam) {
+      syncStatus();
+      $('#s-now').onclick = () => syncNow().catch(() => { });
+      $('#s-off').onclick = () => {
+        const m = modal(`<h2>Ngắt đồng bộ trên máy này?</h2><p>Hồ sơ và điểm hiện có vẫn giữ trên máy này, nhưng từ nay không cộng dồn với các máy khác nữa. Muốn nối lại thì nhập mã ${showCode(S.fam)}.</p>
+          <div class="row"><button class="btn ghost" id="o-no">Thôi</button><button class="btn danger" id="o-yes">Ngắt</button></div>`);
+        $('#o-no', m).onclick = () => m.remove();
+        $('#o-yes', m).onclick = () => { S.fam = ''; net.state = ''; store(); m.remove(); parent(); };
+      };
+    } else {
+      $('#s-new').onclick = () => { S.fam = newCode(); net.state = ''; store(); syncNow().catch(() => { }); parent(); };
+      $('#s-join').onclick = () => {
+        $('#s-join').disabled = true; $('#s-err').textContent = '⏳ Đang kết nối…';
+        joinFamily($('#s-code').value).then(() => parent(), e => { $('#s-join').disabled = false; $('#s-err').textContent = e.message; });
+      };
+    }
     $('#p-limit').onchange = e => { S.limit = +e.target.value; playedSec = 0; save(); };
     $('#p-voice').onchange = e => { S.voice = e.target.checked; save(); };
     $('#p-unlock').onchange = e => { S.unlockAll = e.target.checked; save(); };
@@ -614,7 +774,7 @@
       const m = modal(`<h2>Xoá tiến độ của ${esc(kid())}?</h2><p>Sao, điểm và sticker của bé sẽ mất, không khôi phục được.</p>
         <div class="row"><button class="btn ghost" id="r-no">Giữ lại</button><button class="btn danger" id="r-yes">Xoá</button></div>`);
       $('#r-no', m).onclick = () => m.remove();
-      $('#r-yes', m).onclick = () => { Object.assign(K(), { stars: {}, scores: {}, plays: {}, stickers: [] }); save(); m.remove(); parent(); };
+      $('#r-yes', m).onclick = () => { Object.assign(K(), { ep: (K().ep || 0) + 1, stars: {}, scores: {}, plays: {}, stickers: [] }); save(); m.remove(); parent(); };
     };
   }
 
@@ -631,5 +791,10 @@
   }, 1000);
 
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { });
+  // Có mạng lại, mở lại app, hoặc mỗi phút khi đang mở: lấy điểm mới từ các máy khác và gửi điểm còn tồn
+  window.addEventListener('online', () => { syncSoon(300); rankSoon(600); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) syncSoon(300); });
+  setInterval(() => { if (!document.hidden && !syncing) syncSoon(0); }, 60000);
   home();
+  syncSoon(300); rankSoon(1500);
 })();

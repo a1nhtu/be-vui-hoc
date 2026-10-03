@@ -1,6 +1,6 @@
 // Ưu tiên mạng để bé luôn nhận bản mới; mất mạng thì dùng bản đã lưu.
-const CACHE = 'bevuihoc-v5';
-const ASSETS = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/audio.js', 'js/app.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
+const CACHE = 'bevuihoc-v6';
+const ASSETS = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/audio.js', 'js/merge.js', 'js/app.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
