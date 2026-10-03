@@ -19,16 +19,51 @@
   const loadVoices = () => { voices = synth ? synth.getVoices() : []; };
   if (synth) { loadVoices(); synth.addEventListener && synth.addEventListener('voiceschanged', loadVoices); }
   const findVoice = lang => voices.find(v => v.lang.replace('_', '-') === lang) || voices.find(v => v.lang.slice(0, 2) === lang.slice(0, 2));
-  function speak(items) {
-    if (!S.voice || !synth || !items || !items.length) return;
-    synth.cancel();
-    items.forEach(([text, l]) => {
-      const lang = l === 'en' ? 'en-US' : 'vi-VN', u = new SpeechSynthesisUtterance(text), v = findVoice(lang);
-      u.lang = lang; if (v) u.voice = v;
-      u.rate = l === 'en' ? 0.8 : 0.9; u.pitch = 1.1;
-      synth.speak(u);
-    });
+  // Tiếng Việt: phát file mp3 thu sẵn (giọng HoaiMy); câu nào chưa có file hoặc tiếng Anh thì dùng giọng của máy.
+  const hasClip = text => typeof AUDIO_VI !== 'undefined' && AUDIO_VI.has(audioKey(text));
+  const player = new Audio(), clips = new Map();
+  let speakId = 0;
+  // Tải mp3 bằng fetch để bản lưu ngoại tuyến dùng được trên mọi trình duyệt
+  const clipUrl = key => {
+    if (!clips.has(key)) clips.set(key, fetch(`audio/vi/${key}.mp3`).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(b => URL.createObjectURL(b)));
+    return clips.get(key);
+  };
+  function tts(text, l, next) {
+    if (!synth) return next();
+    const lang = l === 'en' ? 'en-US' : 'vi-VN', u = new SpeechSynthesisUtterance(text), v = findVoice(lang);
+    u.lang = lang; if (v) u.voice = v;
+    u.rate = l === 'en' ? 0.8 : 0.9; u.pitch = 1.1;
+    u.onend = u.onerror = next;
+    synth.speak(u);
   }
+  function stopSpeak() { speakId++; player.pause(); synth && synth.cancel(); }
+  function speak(items) {
+    if (!S.voice || !items || !items.length) return;
+    stopSpeak();
+    const my = speakId;
+    const run = k => {
+      if (my !== speakId || k >= items.length) return;
+      const [text, l] = items[k];
+      let moved = false;
+      const step = fn => () => { if (moved || my !== speakId) return; moved = true; fn(); };
+      const next = step(() => run(k + 1));
+      if (l !== 'vi' || !hasClip(text)) return tts(text, l, next);
+      const fallback = step(() => tts(text, l, () => run(k + 1)));
+      clipUrl(audioKey(text)).then(url => {
+        if (my !== speakId) return;
+        player.onended = next; player.onerror = fallback;
+        player.src = url;
+        return player.play();
+      }).catch(fallback);
+    };
+    run(0);
+  }
+  // iOS chỉ cho phát tiếng sau khi người dùng chạm: mở khoá trình phát ở lần chạm đầu
+  document.addEventListener('pointerdown', () => {
+    if (!S.voice) return;
+    player.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+    player.play().catch(() => { });
+  }, { once: true });
   let ac;
   function tone(freq, dur, when = 0, type = 'sine', vol = 0.14) {
     try {
@@ -45,10 +80,8 @@
     pop() { tone(520, 0.08, 0, 'square', 0.07); },
     win() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.25, i * 0.14)); }
   };
-  const PRAISE = ['Đúng rồi!', 'Giỏi lắm!', 'Tuyệt vời!', 'Hay quá!', 'Chính xác!'];
-  const RETRY = ['Thử lại nhé!', 'Chưa đúng, con chọn lại nào!', 'Gần đúng rồi, thử lại nhé!'];
-  const praise = () => speak([[U.pick(PRAISE), 'vi']]);
-  const retry = () => speak([[U.pick(RETRY), 'vi']]);
+  const praise = () => speak([[U.pick(SAY.praise), 'vi']]);
+  const retry = () => speak([[U.pick(SAY.retry), 'vi']]);
 
   /* ---------- Tiến độ ---------- */
   const starsOf = id => S.stars[id] || 0;
@@ -60,7 +93,7 @@
   /* ---------- Màn hình chính ---------- */
   let timers = [];
   const later = (fn, ms) => { timers.push(setTimeout(fn, ms)); };
-  function clearScreen() { timers.forEach(clearTimeout); timers = []; synth && synth.cancel(); }
+  function clearScreen() { timers.forEach(clearTimeout); timers = []; stopSpeak(); }
 
   function home() {
     clearScreen();
@@ -84,7 +117,7 @@
         <button class="btn ghost" id="stickers">🎁 Sticker của bé (${S.stickers.length})</button>
         <button class="btn ghost" id="parent">👨‍👩‍👧 Góc bố mẹ</button>
       </footer>`;
-    $('#mascot').onclick = () => speak([[`Chào ${kid()}! Hôm nay mình học gì nào?`, 'vi']]);
+    $('#mascot').onclick = () => speak([[SAY.hello, 'vi']]);
     $$('.subject').forEach(b => b.onclick = () => subject(b.dataset.s));
     $('#stickers').onclick = stickerBook;
     $('#parent').onclick = () => gate(parent);
@@ -112,7 +145,7 @@
     $('#back').onclick = home;
     $$('.lesson').forEach(b => b.onclick = () => {
       const i = +b.dataset.i;
-      if (!unlocked(s, i)) { sfx.no(); speak([['Con học xong bài trước để mở khoá nhé!', 'vi']]); b.classList.add('shake'); later(() => b.classList.remove('shake'), 500); return; }
+      if (!unlocked(s, i)) { sfx.no(); speak([[SAY.locked, 'vi']]); b.classList.add('shake'); later(() => b.classList.remove('shake'), 500); return; }
       play(s, i);
     });
   }
@@ -226,7 +259,7 @@
   function runMemory(ctx, cards) {
     cards = U.shuffle(cards);
     let first = null, lock = false, found = 0, misses = 0;
-    ctx.replay = () => speak([['Bé lật hai thẻ giống nhau thành một cặp nhé!', 'vi']]);
+    ctx.replay = () => speak([[SAY.memory, 'vi']]);
     ctx.stage.innerHTML = `<p class="prompt">Lật thẻ tìm cặp</p>
       <div class="memory">${cards.map((c, k) => `<button class="mcard" data-k="${k}"><span class="back">❓</span><span class="face">${c.h}</span></button>`).join('')}</div>`;
     $$('.mcard').forEach(b => b.onclick = () => {
@@ -303,7 +336,7 @@
         </div>
       </main>`;
     sfx.win();
-    speak([[`Hoan hô ${kid()}! Con được ${stars} sao!`, 'vi']]);
+    speak([[SAY.done[stars - 1], 'vi']]);
     if (hasNext) $('#next').onclick = () => play(s, i + 1);
     $('#replay').onclick = () => play(s, i);
     $('#map').onclick = () => subject(s.id);
@@ -345,7 +378,7 @@
   function parent() {
     clearScreen();
     document.body.style.setProperty('--accent', '#5b6b7a');
-    const hasVi = !!voices.find(v => v.lang.slice(0, 2) === 'vi'), hasEn = !!voices.find(v => v.lang.slice(0, 2) === 'en');
+    const hasEn = !!voices.find(v => v.lang.slice(0, 2) === 'en');
     app.innerHTML = `
       <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>Góc bố mẹ</h2><span></span></header>
       <main class="parent">
@@ -360,8 +393,8 @@
         </section>
         <section>
           <h3>Giọng đọc trên máy này</h3>
-          <p>${synth ? `Tiếng Việt: <b>${hasVi ? 'có' : 'chưa có'}</b> · Tiếng Anh: <b>${hasEn ? 'có' : 'chưa có'}</b>` : 'Trình duyệt này không hỗ trợ giọng đọc.'}</p>
-          ${synth && !hasVi ? '<p class="warn">Máy chưa có giọng tiếng Việt nên phần nghe có thể sai hoặc im lặng. Điện thoại và máy tính bảng thường có sẵn; trên Windows vào Cài đặt → Thời gian &amp; ngôn ngữ → Giọng nói để thêm giọng Tiếng Việt.</p>' : ''}
+          <p>Tiếng Việt: <b>giọng thu sẵn</b>, máy nào cũng nghe giống nhau · Tiếng Anh: <b>${hasEn ? 'giọng của máy' : 'máy chưa có giọng'}</b></p>
+          ${hasEn ? '' : '<p class="warn">Máy này chưa có giọng tiếng Anh nên phần nghe tiếng Anh có thể im lặng. Bố mẹ thêm giọng English trong phần cài đặt giọng nói của máy.</p>'}
           <div class="row"><button class="btn ghost" id="t-vi">Thử tiếng Việt</button><button class="btn ghost" id="t-en">Thử tiếng Anh</button></div>
         </section>
         <section>
@@ -382,7 +415,7 @@
     $('#p-limit').onchange = e => { S.limit = +e.target.value; playedSec = 0; save(); };
     $('#p-voice').onchange = e => { S.voice = e.target.checked; save(); };
     $('#p-unlock').onchange = e => { S.unlockAll = e.target.checked; save(); };
-    $('#t-vi').onclick = () => speak([[`Chào ${kid()}! Mình cùng học nhé.`, 'vi']]);
+    $('#t-vi').onclick = () => speak([[SAY.test, 'vi']]);
     $('#t-en').onclick = () => speak([['Hello! Let us learn together.', 'en']]);
     $('#p-reset').onclick = () => {
       const m = modal(`<h2>Xoá toàn bộ tiến độ?</h2><p>Sao và sticker của bé sẽ mất, không khôi phục được.</p>
@@ -397,8 +430,8 @@
   setInterval(() => {
     if (document.hidden || resting || !S.limit) return;
     if (++playedSec < S.limit * 60) return;
-    resting = true; synth && synth.cancel();
-    speak([[`${kid()} ơi, mình nghỉ mắt một lát nhé!`, 'vi']]);
+    resting = true;
+    speak([[SAY.rest, 'vi']]);
     const m = modal(`<div class="rest">😴</div><h2>Nghỉ mắt thôi nào!</h2><p>Bé đã học ${S.limit} phút rồi. Mình uống nước và nhìn ra xa một lát nhé.</p>
       <button class="btn" id="rest-go">Bố mẹ cho học tiếp</button>`);
     $('#rest-go', m).onclick = () => gate(() => { m.remove(); playedSec = 0; resting = false; });

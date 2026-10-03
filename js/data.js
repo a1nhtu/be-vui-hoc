@@ -10,6 +10,24 @@ const U = {
   up(s) { return s.toLocaleUpperCase('vi'); }
 };
 
+// Tên file mp3 của một câu đọc tiếng Việt (dùng chung cho app và tools/gen-audio.mjs)
+function audioKey(t) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+// Câu nói cố định của app. Không chèn tên bé vào đây vì giọng đọc là file thu sẵn.
+const SAY = {
+  praise: ['Đúng rồi!', 'Giỏi lắm!', 'Tuyệt vời!', 'Hay quá!', 'Chính xác!'],
+  retry: ['Thử lại nhé!', 'Chưa đúng, con chọn lại nào!', 'Gần đúng rồi, thử lại nhé!'],
+  hello: 'Chào bé! Hôm nay mình học gì nào?',
+  locked: 'Con học xong bài trước để mở khoá nhé!',
+  memory: 'Bé lật hai thẻ giống nhau thành một cặp nhé!',
+  done: ['Hoan hô! Con được 1 sao!', 'Hoan hô! Con được 2 sao!', 'Hoan hô! Con được 3 sao!'],
+  rest: 'Bé ơi, mình nghỉ mắt một lát nhé!',
+  test: 'Chào bé! Mình cùng học nhé.'
+};
+
 /* ---------- Dữ liệu gốc ---------- */
 
 // 29 chữ cái tiếng Việt: c = chữ, s = cách đọc âm (theo chương trình lớp 1), w = từ mẫu, e = hình, pic = dùng cho bài "chữ đầu của hình"
