@@ -2,7 +2,7 @@
 
 Web app trò chơi học tập cho bé 5 tuổi chuẩn bị vào lớp 1: **Tiếng Việt, Toán, Tiếng Anh** và **Câu đố vui**.
 
-- 53 bài, 5 kiểu trò chơi: thẻ học, nghe – chọn đáp án, bóng bay, lật thẻ trí nhớ, ghép chữ.
+- 82 bài, 7 kiểu trò chơi: thẻ học, nghe – chọn đáp án, bóng bay, đập chuột, lật thẻ trí nhớ, ghép chữ / xếp số, nhớ dãy màu.
 - Mọi câu hỏi đều được đọc thành tiếng: cả tiếng Việt và tiếng Anh đều bằng giọng thu sẵn.
 - Thưởng sao và sticker, mở khoá bài theo thứ tự.
 - Góc bố mẹ: đặt tên bé, nhắc nghỉ mắt, xem tiến độ, mở khoá tất cả.
@@ -57,3 +57,7 @@ node tools/gen-audio.mjs index
 ```
 
 Bước giữa cần `pip install edge-tts` và có mạng; chỉ những câu chưa có file mới được thu.
+
+---
+
+Gia đình Tú – Nhung – Su – Thỏ · P. Vĩnh Hưng, Hà Nội

@@ -126,7 +126,10 @@
       <footer class="dock">
         <button class="btn ghost" id="stickers">🎁 Sticker của bé (${S.stickers.length})</button>
         <button class="btn ghost" id="parent">👨‍👩‍👧 Góc bố mẹ</button>
-      </footer>`;
+      </footer>
+      <figure class="family"><img id="family" src="${FAMILY_PHOTO}" alt="Ảnh gia đình"><figcaption>${esc(CREDIT)}</figcaption></figure>`;
+    // Ảnh chỉ hiện khi tải được; chưa có file ảnh thì chỉ còn dòng chữ
+    $('#family').onload = e => e.target.classList.add('ok');
     $('#mascot').onclick = () => speak([[SAY.hello, 'vi']]);
     $$('.subject').forEach(b => b.onclick = () => subject(b.dataset.s));
     $('#stickers').onclick = stickerBook;
@@ -161,7 +164,7 @@
   }
 
   /* ---------- Khung chơi chung ---------- */
-  const RUN = { learn: runLearn, choice: runChoice, balloon: runBalloon, memory: runMemory, build: runBuild };
+  const RUN = { learn: runLearn, choice: runChoice, balloon: runBalloon, mole: runMole, memory: runMemory, build: runBuild, simon: runSimon };
   function play(s, i) {
     clearScreen();
     const l = s.lessons[i], ctx = { s, i, l, replay: null };
@@ -263,6 +266,73 @@
       ctx.replay();
     };
     show();
+  }
+
+  // Đập chuột: chuột thò lên mang chữ/số, chạm đúng 3 con mang chữ được gọi tên
+  function runMole(ctx, rounds) {
+    const NEED = 3;
+    let i = 0, mistakes = 0;
+    const show = () => {
+      if (i >= rounds.length) return ctx.done(mistakes);
+      const r = rounds[i]; let got = 0, over = false;
+      ctx.progress(i / rounds.length);
+      ctx.replay = () => speak(r.say);
+      ctx.stage.innerHTML = `
+        <p class="prompt">${r.text} <b class="ltr target">${r.target}</b> <span id="got">0/${NEED}</span></p>
+        <div class="holes">${'<button class="hole"><span class="mole ltr"></span></button>'.repeat(9)}</div>`;
+      const holes = $$('.hole');
+      const pop = () => {
+        if (over) return;
+        const h = U.pick(holes.filter(x => !x.classList.contains('up')));
+        if (h) {
+          h.dataset.t = Math.random() < 0.45 ? r.target : U.pick(r.others);
+          $('.mole', h).textContent = h.dataset.t;
+          h.classList.add('up');
+          later(() => h.classList.remove('up', 'hit'), 2000);
+        }
+        later(pop, 900);
+      };
+      holes.forEach(h => h.onclick = () => {
+        if (over || !h.classList.contains('up') || h.classList.contains('hit')) return;
+        if (h.dataset.t === r.target) {
+          h.classList.add('hit'); sfx.pop(); got++;
+          $('#got').textContent = `${got}/${NEED}`;
+          if (got >= NEED) { over = true; sfx.ok(); i++; praiseThen(show); }
+        } else { mistakes++; sfx.no(); shake(h); }
+      });
+      ctx.replay(); later(pop, 1500);
+    };
+    show();
+  }
+
+  // Nhớ dãy màu: máy nháy một dãy ô, bé chạm lại đúng thứ tự
+  function runSimon(ctx, lens) {
+    const PADS = [['#ff5a5f', 330], ['#3aa6ff', 392], ['#ffb703', 494], ['#20c997', 587]];
+    let i = 0, mistakes = 0, order = [], pos = 0, listening = false;
+    ctx.replay = () => speak([[SAY.simon, 'vi']]);
+    ctx.stage.innerHTML = `<p class="prompt">Nhớ dãy màu</p><p class="status" id="status">👀 Bé nhìn nhé</p>
+      <div class="pads">${PADS.map(([c], k) => `<button class="pad" data-k="${k}" style="--pc:${c}" aria-label="Ô màu ${k + 1}"></button>`).join('')}</div>`;
+    const pads = $$('.pad'), status = $('#status');
+    const flash = k => { pads[k].classList.add('lit'); tone(PADS[k][1], 0.3); later(() => pads[k].classList.remove('lit'), 380); };
+    const playSeq = () => {
+      listening = false; status.textContent = '👀 Bé nhìn nhé';
+      order.forEach((k, j) => later(() => flash(k), 700 + j * 700));
+      later(() => { listening = true; pos = 0; status.textContent = '👉 Đến lượt bé'; }, 700 + order.length * 700);
+    };
+    const start = () => {
+      if (i >= lens.length) return ctx.done(mistakes);
+      ctx.progress(i / lens.length);
+      order = Array.from({ length: lens[i] }, () => U.rnd(0, 3));
+      playSeq();
+    };
+    pads.forEach(p => p.onclick = () => {
+      if (!listening) return;
+      const k = +p.dataset.k; flash(k);
+      if (k === order[pos]) {
+        if (++pos === order.length) { listening = false; status.textContent = '🎉 Đúng rồi!'; sfx.ok(); i++; later(start, 1100); }
+      } else { listening = false; mistakes++; status.textContent = '🙈 Xem lại nhé'; sfx.no(); later(playSeq, 1000); }
+    });
+    sayThen([[SAY.simon, 'vi']], start, 8000);
   }
 
   // Lật thẻ tìm cặp

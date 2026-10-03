@@ -46,6 +46,51 @@
  },
  {
   "l": "vi",
+  "k": "4982050a",
+  "t": "10 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "c9e3909f",
+  "t": "10 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "2a66ac94",
+  "t": "10 gồm 3 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "d5c6ef59",
+  "t": "10 gồm 4 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "d98750f6",
+  "t": "10 gồm 5 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "a0df1dbb",
+  "t": "10 gồm 6 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "89f0d010",
+  "t": "10 gồm 7 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "cc266505",
+  "t": "10 gồm 8 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "56bff9b2",
+  "t": "10 gồm 9 và mấy?"
+ },
+ {
+  "l": "vi",
   "k": "13b7cabc",
   "t": "10 trừ 1 bằng mấy?"
  },
@@ -171,6 +216,16 @@
  },
  {
   "l": "vi",
+  "k": "8f0caf40",
+  "t": "3 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "91d417c9",
+  "t": "3 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
   "k": "4832a782",
   "t": "3 trừ 1 bằng mấy?"
  },
@@ -208,6 +263,21 @@
   "l": "vi",
   "k": "cdca38f0",
   "t": "4 cộng 6 bằng mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "acb5dd49",
+  "t": "4 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "2a9610c0",
+  "t": "4 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "fe1857eb",
+  "t": "4 gồm 3 và mấy?"
  },
  {
   "l": "vi",
@@ -251,6 +321,26 @@
  },
  {
   "l": "vi",
+  "k": "280beb06",
+  "t": "5 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "d9291fcb",
+  "t": "5 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "ec5a23a0",
+  "t": "5 gồm 3 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "6a926d0d",
+  "t": "5 gồm 4 và mấy?"
+ },
+ {
+  "l": "vi",
   "k": "6ee9e428",
   "t": "5 trừ 1 bằng mấy?"
  },
@@ -288,6 +378,31 @@
   "l": "vi",
   "k": "eff6e344",
   "t": "6 cộng 4 bằng mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "16341277",
+  "t": "6 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "0a3c5862",
+  "t": "6 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "56bb1ab5",
+  "t": "6 gồm 3 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "d7f24e48",
+  "t": "6 gồm 4 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "ad817ff3",
+  "t": "6 gồm 5 và mấy?"
  },
  {
   "l": "vi",
@@ -331,6 +446,36 @@
  },
  {
   "l": "vi",
+  "k": "b84ce064",
+  "t": "7 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "1b01998d",
+  "t": "7 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "3022085a",
+  "t": "7 gồm 3 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "89984c4b",
+  "t": "7 gồm 4 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "01fc2420",
+  "t": "7 gồm 5 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "730f47a9",
+  "t": "7 gồm 6 và mấy?"
+ },
+ {
+  "l": "vi",
   "k": "decb4446",
   "t": "7 trừ 1 bằng mấy?"
  },
@@ -371,6 +516,41 @@
  },
  {
   "l": "vi",
+  "k": "12d7132d",
+  "t": "8 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "fec95a84",
+  "t": "8 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "475cbf0f",
+  "t": "8 gồm 3 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "2703d5a6",
+  "t": "8 gồm 4 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "4d120a49",
+  "t": "8 gồm 5 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "caf23dc0",
+  "t": "8 gồm 6 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "9e7484eb",
+  "t": "8 gồm 7 và mấy?"
+ },
+ {
+  "l": "vi",
   "k": "e3e11017",
   "t": "8 trừ 1 bằng mấy?"
  },
@@ -408,6 +588,46 @@
   "l": "vi",
   "k": "685a6b08",
   "t": "9 cộng 1 bằng mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "5cbcc71a",
+  "t": "9 gồm 1 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "6884522f",
+  "t": "9 gồm 2 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "9ff02424",
+  "t": "9 gồm 3 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "d1dea769",
+  "t": "9 gồm 4 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "bb51a346",
+  "t": "9 gồm 5 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "52a1c50b",
+  "t": "9 gồm 6 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "e6fac2e0",
+  "t": "9 gồm 7 và mấy?"
+ },
+ {
+  "l": "vi",
+  "k": "1e34b915",
+  "t": "9 gồm 8 và mấy?"
  },
  {
   "l": "vi",
@@ -511,8 +731,38 @@
  },
  {
   "l": "vi",
+  "k": "0fccfbba",
+  "t": "bàn chân"
+ },
+ {
+  "l": "vi",
   "k": "ac3333d0",
   "t": "Ban đêm cái gì sáng tròn trên trời?"
+ },
+ {
+  "l": "vi",
+  "k": "bd7af25c",
+  "t": "Ban đêm có mặt trăng."
+ },
+ {
+  "l": "vi",
+  "k": "deac3a81",
+  "t": "bàn tay"
+ },
+ {
+  "l": "vi",
+  "k": "347f819f",
+  "t": "bánh mì"
+ },
+ {
+  "l": "vi",
+  "k": "928bee94",
+  "t": "bánh ngọt"
+ },
+ {
+  "l": "vi",
+  "k": "c2485de8",
+  "t": "bánh pizza"
  },
  {
   "l": "vi",
@@ -543,6 +793,21 @@
   "l": "vi",
   "k": "1434d9d4",
   "t": "bẹ"
+ },
+ {
+  "l": "vi",
+  "k": "79f8ca99",
+  "t": "Bé chạm các số từ bé đến lớn."
+ },
+ {
+  "l": "vi",
+  "k": "42fd17fc",
+  "t": "Bé chọn dấu đúng."
+ },
+ {
+  "l": "vi",
+  "k": "dc96d9fb",
+  "t": "Bé chọn tiếng đúng với hình."
  },
  {
   "l": "vi",
@@ -936,13 +1201,223 @@
  },
  {
   "l": "vi",
+  "k": "850bcde6",
+  "t": "Bé hãy đập chuột mang chữ"
+ },
+ {
+  "l": "vi",
+  "k": "5273f629",
+  "t": "Bé hãy đập chuột mang chữ a"
+ },
+ {
+  "l": "vi",
+  "k": "d2732ca9",
+  "t": "Bé hãy đập chuột mang chữ á"
+ },
+ {
+  "l": "vi",
+  "k": "c0824d57",
+  "t": "Bé hãy đập chuột mang chữ bờ"
+ },
+ {
+  "l": "vi",
+  "k": "08882346",
+  "t": "Bé hãy đập chuột mang chữ ca"
+ },
+ {
+  "l": "vi",
+  "k": "847f747a",
+  "t": "Bé hãy đập chuột mang chữ cờ"
+ },
+ {
+  "l": "vi",
+  "k": "1c8842c2",
+  "t": "Bé hãy đập chuột mang chữ cu"
+ },
+ {
+  "l": "vi",
+  "k": "c4704f2d",
+  "t": "Bé hãy đập chuột mang chữ dờ"
+ },
+ {
+  "l": "vi",
+  "k": "8266840c",
+  "t": "Bé hãy đập chuột mang chữ đờ"
+ },
+ {
+  "l": "vi",
+  "k": "5673fc75",
+  "t": "Bé hãy đập chuột mang chữ e"
+ },
+ {
+  "l": "vi",
+  "k": "d7733488",
+  "t": "Bé hãy đập chuột mang chữ ê"
+ },
+ {
+  "l": "vi",
+  "k": "84758ad6",
+  "t": "Bé hãy đập chuột mang chữ gờ"
+ },
+ {
+  "l": "vi",
+  "k": "c4ce4b89",
+  "t": "Bé hãy đập chuột mang chữ hờ"
+ },
+ {
+  "l": "vi",
+  "k": "5a7402c1",
+  "t": "Bé hãy đập chuột mang chữ i"
+ },
+ {
+  "l": "vi",
+  "k": "4a5c3392",
+  "t": "Bé hãy đập chuột mang chữ i dài"
+ },
+ {
+  "l": "vi",
+  "k": "c4c461e5",
+  "t": "Bé hãy đập chuột mang chữ lờ"
+ },
+ {
+  "l": "vi",
+  "k": "80c17c70",
+  "t": "Bé hãy đập chuột mang chữ mờ"
+ },
+ {
+  "l": "vi",
+  "k": "80c5c5ab",
+  "t": "Bé hãy đập chuột mang chữ nờ"
+ },
+ {
+  "l": "vi",
+  "k": "5c7405e7",
+  "t": "Bé hãy đập chuột mang chữ o"
+ },
+ {
+  "l": "vi",
+  "k": "c5731832",
+  "t": "Bé hãy đập chuột mang chữ ô"
+ },
+ {
+  "l": "vi",
+  "k": "92745ae9",
+  "t": "Bé hãy đập chuột mang chữ ơ"
+ },
+ {
+  "l": "vi",
+  "k": "e876754b",
+  "t": "Bé hãy đập chuột mang chữ ớ"
+ },
+ {
+  "l": "vi",
+  "k": "c4404561",
+  "t": "Bé hãy đập chuột mang chữ pờ"
+ },
+ {
+  "l": "vi",
+  "k": "8041a927",
+  "t": "Bé hãy đập chuột mang chữ rờ"
+ },
+ {
+  "l": "vi",
+  "k": "84425b0a",
+  "t": "Bé hãy đập chuột mang chữ sờ"
+ },
+ {
+  "l": "vi",
+  "k": "c49b1bbd",
+  "t": "Bé hãy đập chuột mang chữ tờ"
+ },
+ {
+  "l": "vi",
+  "k": "4673e345",
+  "t": "Bé hãy đập chuột mang chữ u"
+ },
+ {
+  "l": "vi",
+  "k": "81744026",
+  "t": "Bé hãy đập chuột mang chữ ư"
+ },
+ {
+  "l": "vi",
+  "k": "8037bf83",
+  "t": "Bé hãy đập chuột mang chữ vờ"
+ },
+ {
+  "l": "vi",
+  "k": "c4913219",
+  "t": "Bé hãy đập chuột mang chữ xờ"
+ },
+ {
+  "l": "vi",
+  "k": "73ae37f5",
+  "t": "Bé hãy đập chuột mang số 1"
+ },
+ {
+  "l": "vi",
+  "k": "e041cb1f",
+  "t": "Bé hãy đập chuột mang số 10"
+ },
+ {
+  "l": "vi",
+  "k": "70ae333c",
+  "t": "Bé hãy đập chuột mang số 2"
+ },
+ {
+  "l": "vi",
+  "k": "71ae34cf",
+  "t": "Bé hãy đập chuột mang số 3"
+ },
+ {
+  "l": "vi",
+  "k": "6eae3016",
+  "t": "Bé hãy đập chuột mang số 4"
+ },
+ {
+  "l": "vi",
+  "k": "6fae31a9",
+  "t": "Bé hãy đập chuột mang số 5"
+ },
+ {
+  "l": "vi",
+  "k": "6cae2cf0",
+  "t": "Bé hãy đập chuột mang số 6"
+ },
+ {
+  "l": "vi",
+  "k": "6dae2e83",
+  "t": "Bé hãy đập chuột mang số 7"
+ },
+ {
+  "l": "vi",
+  "k": "7aae42fa",
+  "t": "Bé hãy đập chuột mang số 8"
+ },
+ {
+  "l": "vi",
+  "k": "7bae448d",
+  "t": "Bé hãy đập chuột mang số 9"
+ },
+ {
+  "l": "vi",
   "k": "9fe21db4",
   "t": "Bé lật hai thẻ giống nhau thành một cặp nhé!"
  },
  {
   "l": "vi",
+  "k": "00d0b801",
+  "t": "Bé nhìn các ô sáng lên, rồi chạm lại đúng thứ tự nhé!"
+ },
+ {
+  "l": "vi",
   "k": "7de03a10",
   "t": "Bé ơi, mình nghỉ mắt một lát nhé!"
+ },
+ {
+  "l": "vi",
+  "k": "1f58192d",
+  "t": "Bé uống gì màu trắng để mau lớn?"
  },
  {
   "l": "vi",
@@ -1071,6 +1546,11 @@
  },
  {
   "l": "vi",
+  "k": "af5c54d2",
+  "t": "Cái gì bay vút lên vũ trụ?"
+ },
+ {
+  "l": "vi",
   "k": "fc9250c1",
   "t": "Cái gì bé dùng để đọc truyện?"
  },
@@ -1081,8 +1561,28 @@
  },
  {
   "l": "vi",
+  "k": "a6ea5ffe",
+  "t": "Cái gì bé dùng để xúc cơm ăn?"
+ },
+ {
+  "l": "vi",
   "k": "63a28ed5",
   "t": "Cái gì bé đi vào chân trước khi ra đường?"
+ },
+ {
+  "l": "vi",
+  "k": "aec9c9f5",
+  "t": "Cái gì bé đội lên đầu khi trời nắng?"
+ },
+ {
+  "l": "vi",
+  "k": "53979c72",
+  "t": "Cái gì bé ôm khi đi ngủ, mềm và êm?"
+ },
+ {
+  "l": "vi",
+  "k": "d43d5bc6",
+  "t": "Cái gì chạy trên đường ray, kêu tu tu xình xịch?"
  },
  {
   "l": "vi",
@@ -1096,8 +1596,43 @@
  },
  {
   "l": "vi",
+  "k": "f9468306",
+  "t": "Cái gì dùng để cắt giấy?"
+ },
+ {
+  "l": "vi",
+  "k": "3a83b013",
+  "t": "Cái gì dùng để gọi điện cho ông bà?"
+ },
+ {
+  "l": "vi",
   "k": "1f7523f0",
   "t": "Cái gì dùng để mở khoá cửa?"
+ },
+ {
+  "l": "vi",
+  "k": "51ab12f8",
+  "t": "Cái gì đi trên mặt nước, chở người qua biển?"
+ },
+ {
+  "l": "vi",
+  "k": "8b7dddbe",
+  "t": "Cái gì ngọt, có nến, bé thổi vào ngày sinh nhật?"
+ },
+ {
+  "l": "vi",
+  "k": "de71545d",
+  "t": "Cái gì nở ra thành gà con?"
+ },
+ {
+  "l": "vi",
+  "k": "ea371f56",
+  "t": "Cái gì phát ra ánh sáng khi trời tối?"
+ },
+ {
+  "l": "vi",
+  "k": "67b764c7",
+  "t": "Cái gì rơi từ trên trời xuống làm ướt sân?"
  },
  {
   "l": "vi",
@@ -1111,6 +1646,11 @@
  },
  {
   "l": "vi",
+  "k": "c5bf40f4",
+  "t": "Cây cần nước để lớn."
+ },
+ {
+  "l": "vi",
   "k": "048fb42e",
   "t": "Chào bé! Hôm nay mình học gì nào?"
  },
@@ -1118,6 +1658,11 @@
   "l": "vi",
   "k": "55411fc2",
   "t": "Chào bé! Mình cùng học nhé."
+ },
+ {
+  "l": "vi",
+  "k": "8b824c9e",
+  "t": "chân"
  },
  {
   "l": "vi",
@@ -1213,6 +1758,16 @@
   "l": "vi",
   "k": "3ce357e3",
   "t": "Chữ mờ"
+ },
+ {
+  "l": "vi",
+  "k": "98e802c7",
+  "t": "Chữ nào còn thiếu?"
+ },
+ {
+  "l": "vi",
+  "k": "46710fed",
+  "t": "Chữ nào giống hệt chữ mẫu?"
  },
  {
   "l": "vi",
@@ -1366,8 +1921,18 @@
  },
  {
   "l": "vi",
+  "k": "d1b59e19",
+  "t": "Con bò cho chúng ta sữa."
+ },
+ {
+  "l": "vi",
   "k": "f9315715",
   "t": "con cá"
+ },
+ {
+  "l": "vi",
+  "k": "84117719",
+  "t": "Con cá biết bơi."
  },
  {
   "l": "vi",
@@ -1376,13 +1941,33 @@
  },
  {
   "l": "vi",
+  "k": "f9bb66f8",
+  "t": "Con chim có hai cánh."
+ },
+ {
+  "l": "vi",
   "k": "357fed4b",
   "t": "con chó"
  },
  {
   "l": "vi",
+  "k": "09ba71b7",
+  "t": "Con chó có sáu chân."
+ },
+ {
+  "l": "vi",
+  "k": "0fbb6c9b",
+  "t": "Con gà mái đẻ trứng."
+ },
+ {
+  "l": "vi",
   "k": "fc313038",
   "t": "Con gì ăn no, bụng to, kêu ụt ịt?"
+ },
+ {
+  "l": "vi",
+  "k": "85b4fd3d",
+  "t": "Con gì bò ngang, có hai cái càng?"
  },
  {
   "l": "vi",
@@ -1398,6 +1983,21 @@
   "l": "vi",
   "k": "9575e663",
   "t": "Con gì có cái vòi thật dài?"
+ },
+ {
+  "l": "vi",
+  "k": "2bc35a3d",
+  "t": "Con gì có cánh rất đẹp, hay đậu trên hoa?"
+ },
+ {
+  "l": "vi",
+  "k": "170c14c4",
+  "t": "Con gì có tám cái chân, hay giăng tơ?"
+ },
+ {
+  "l": "vi",
+  "k": "b0d9ec89",
+  "t": "Con gì có tám cái tua, sống dưới biển?"
  },
  {
   "l": "vi",
@@ -1436,6 +2036,11 @@
  },
  {
   "l": "vi",
+  "k": "cdb33273",
+  "t": "Con gì to nhất dưới biển, phun nước lên cao?"
+ },
+ {
+  "l": "vi",
   "k": "f08e8fd7",
   "t": "Con học xong bài trước để mở khoá nhé!"
  },
@@ -1456,13 +2061,33 @@
  },
  {
   "l": "vi",
+  "k": "d47454cd",
+  "t": "Con mèo kêu gâu gâu."
+ },
+ {
+  "l": "vi",
   "k": "e4ccbb41",
   "t": "con ong"
  },
  {
   "l": "vi",
+  "k": "b4a7d2e9",
+  "t": "Con ong làm ra mật."
+ },
+ {
+  "l": "vi",
+  "k": "e9fb3031",
+  "t": "Con rùa bò rất nhanh."
+ },
+ {
+  "l": "vi",
   "k": "99b8b92e",
   "t": "con thỏ"
+ },
+ {
+  "l": "vi",
+  "k": "a74d88c0",
+  "t": "con thuyền"
  },
  {
   "l": "vi",
@@ -1473,6 +2098,11 @@
   "l": "vi",
   "k": "1acc0e15",
   "t": "con voi"
+ },
+ {
+  "l": "vi",
+  "k": "1b9f05c9",
+  "t": "Con voi biết bay."
  },
  {
   "l": "vi",
@@ -1488,6 +2118,11 @@
   "l": "vi",
   "k": "2b0d7aa2",
   "t": "cờ, o, co."
+ },
+ {
+  "l": "vi",
+  "k": "f1cb35ec",
+  "t": "cơm"
  },
  {
   "l": "vi",
@@ -1566,6 +2201,11 @@
  },
  {
   "l": "vi",
+  "k": "c139a43d",
+  "t": "Đây là bóng của hình nào?"
+ },
+ {
+  "l": "vi",
   "k": "b8809616",
   "t": "đèn"
  },
@@ -1598,6 +2238,11 @@
   "l": "vi",
   "k": "9376b74a",
   "t": "đờ, o, đo."
+ },
+ {
+  "l": "vi",
+  "k": "e919cd32",
+  "t": "Đúng hay sai?"
  },
  {
   "l": "vi",
@@ -1696,6 +2341,11 @@
  },
  {
   "l": "vi",
+  "k": "412cbb85",
+  "t": "Hình nào giống hệt hình mẫu?"
+ },
+ {
+  "l": "vi",
   "k": "dec4e93a",
   "t": "Hình nào khác với các hình còn lại?"
  },
@@ -1718,6 +2368,16 @@
   "l": "vi",
   "k": "1ad2ea03",
   "t": "Hình nào là hình vuông?"
+ },
+ {
+  "l": "vi",
+  "k": "3eec2ef1",
+  "t": "Hình nào nhỏ hơn?"
+ },
+ {
+  "l": "vi",
+  "k": "4c60abb3",
+  "t": "Hình nào to hơn?"
  },
  {
   "l": "vi",
@@ -1793,6 +2453,11 @@
   "l": "vi",
   "k": "3c68875a",
   "t": "kem."
+ },
+ {
+  "l": "vi",
+  "k": "28e573b2",
+  "t": "kẹo"
  },
  {
   "l": "vi",
@@ -1961,8 +2626,18 @@
  },
  {
   "l": "vi",
+  "k": "ed28f16e",
+  "t": "máy bay"
+ },
+ {
+  "l": "vi",
   "k": "caa34078",
   "t": "Mặc gì khi trời mưa để không bị ướt?"
+ },
+ {
+  "l": "vi",
+  "k": "d66e3093",
+  "t": "mắt"
  },
  {
   "l": "vi",
@@ -1973,6 +2648,11 @@
   "l": "vi",
   "k": "5cb0a035",
   "t": "mặt trời"
+ },
+ {
+  "l": "vi",
+  "k": "92ffff2c",
+  "t": "Mặt trời mọc vào ban đêm."
  },
  {
   "l": "vi",
@@ -2021,6 +2701,11 @@
  },
  {
   "l": "vi",
+  "k": "61faea33",
+  "t": "miệng"
+ },
+ {
+  "l": "vi",
   "k": "242dbf9b",
   "t": "mơ"
  },
@@ -2038,6 +2723,11 @@
   "l": "vi",
   "k": "eeb3864e",
   "t": "mờ, ơ, mơ."
+ },
+ {
+  "l": "vi",
+  "k": "c414d79e",
+  "t": "mũi"
  },
  {
   "l": "vi",
@@ -2116,6 +2806,11 @@
  },
  {
   "l": "vi",
+  "k": "2e5e85ca",
+  "t": "phô mai"
+ },
+ {
+  "l": "vi",
   "k": "6f410694",
   "t": "pin"
  },
@@ -2156,8 +2851,18 @@
  },
  {
   "l": "vi",
+  "k": "d65e21bd",
+  "t": "Quả chuối chín màu vàng."
+ },
+ {
+  "l": "vi",
   "k": "3b235ac2",
   "t": "quả dứa"
+ },
+ {
+  "l": "vi",
+  "k": "50c92f4d",
+  "t": "Quả dưa hấu bé hơn quả nho."
  },
  {
   "l": "vi",
@@ -2173,6 +2878,11 @@
   "l": "vi",
   "k": "b9e57433",
   "t": "Quả gì màu vàng, khỉ rất thích ăn?"
+ },
+ {
+  "l": "vi",
+  "k": "c721f756",
+  "t": "Quả gì nhỏ, màu đỏ, mọc thành đôi?"
  },
  {
   "l": "vi",
@@ -2193,6 +2903,11 @@
   "l": "vi",
   "k": "2781c696",
   "t": "quyển sách"
+ },
+ {
+  "l": "vi",
+  "k": "9cc63079",
+  "t": "răng"
  },
  {
   "l": "vi",
@@ -2286,6 +3001,96 @@
  },
  {
   "l": "vi",
+  "k": "deb516b6",
+  "t": "Số nào đứng liền sau số 1?"
+ },
+ {
+  "l": "vi",
+  "k": "5ead9171",
+  "t": "Số nào đứng liền sau số 2?"
+ },
+ {
+  "l": "vi",
+  "k": "5eafd008",
+  "t": "Số nào đứng liền sau số 3?"
+ },
+ {
+  "l": "vi",
+  "k": "dea84ac3",
+  "t": "Số nào đứng liền sau số 4?"
+ },
+ {
+  "l": "vi",
+  "k": "5eab52da",
+  "t": "Số nào đứng liền sau số 5?"
+ },
+ {
+  "l": "vi",
+  "k": "dea3cd95",
+  "t": "Số nào đứng liền sau số 6?"
+ },
+ {
+  "l": "vi",
+  "k": "dea60c2c",
+  "t": "Số nào đứng liền sau số 7?"
+ },
+ {
+  "l": "vi",
+  "k": "5e9e86e7",
+  "t": "Số nào đứng liền sau số 8?"
+ },
+ {
+  "l": "vi",
+  "k": "5ea0c57e",
+  "t": "Số nào đứng liền sau số 9?"
+ },
+ {
+  "l": "vi",
+  "k": "947b2481",
+  "t": "Số nào đứng liền trước số 10?"
+ },
+ {
+  "l": "vi",
+  "k": "06e4d53e",
+  "t": "Số nào đứng liền trước số 2?"
+ },
+ {
+  "l": "vi",
+  "k": "06e296a7",
+  "t": "Số nào đứng liền trước số 3?"
+ },
+ {
+  "l": "vi",
+  "k": "86d69434",
+  "t": "Số nào đứng liền trước số 4?"
+ },
+ {
+  "l": "vi",
+  "k": "06d38c1d",
+  "t": "Số nào đứng liền trước số 5?"
+ },
+ {
+  "l": "vi",
+  "k": "86db1162",
+  "t": "Số nào đứng liền trước số 6?"
+ },
+ {
+  "l": "vi",
+  "k": "86d8d2cb",
+  "t": "Số nào đứng liền trước số 7?"
+ },
+ {
+  "l": "vi",
+  "k": "06f3dfc8",
+  "t": "Số nào đứng liền trước số 8?"
+ },
+ {
+  "l": "vi",
+  "k": "06f1a131",
+  "t": "Số nào đứng liền trước số 9?"
+ },
+ {
+  "l": "vi",
   "k": "71a09eb4",
   "t": "Số nào đứng tiếp theo?"
  },
@@ -2306,8 +3111,18 @@
  },
  {
   "l": "vi",
+  "k": "127e0742",
+  "t": "sữa"
+ },
+ {
+  "l": "vi",
   "k": "38453866",
   "t": "ta"
+ },
+ {
+  "l": "vi",
+  "k": "a3f73f9d",
+  "t": "tai"
  },
  {
   "l": "vi",
@@ -2318,6 +3133,16 @@
   "l": "vi",
   "k": "3dd0645f",
   "t": "táo."
+ },
+ {
+  "l": "vi",
+  "k": "ddda8e6e",
+  "t": "tàu hoả"
+ },
+ {
+  "l": "vi",
+  "k": "53ab3561",
+  "t": "tên lửa"
  },
  {
   "l": "vi",
@@ -2466,6 +3291,16 @@
  },
  {
   "l": "vi",
+  "k": "7c465fd5",
+  "t": "trứng"
+ },
+ {
+  "l": "vi",
+  "k": "97aee8a8",
+  "t": "Tuyết thì nóng."
+ },
+ {
+  "l": "vi",
   "k": "fca229f1",
   "t": "Tuyệt vời!"
  },
@@ -2556,13 +3391,28 @@
  },
  {
   "l": "vi",
+  "k": "0af6f23c",
+  "t": "Xe đạp có bốn bánh."
+ },
+ {
+  "l": "vi",
   "k": "6779def2",
   "t": "xe đạp."
  },
  {
   "l": "vi",
+  "k": "8858d271",
+  "t": "Xe gì có hai bánh, bé đạp bằng chân?"
+ },
+ {
+  "l": "vi",
   "k": "906969db",
   "t": "Xe gì kêu ò e, đi chữa cháy?"
+ },
+ {
+  "l": "vi",
+  "k": "463a9a7e",
+  "t": "xe tải"
  },
  {
   "l": "vi",
@@ -2641,6 +3491,11 @@
  },
  {
   "l": "en",
+  "k": "c4602668",
+  "t": "bike"
+ },
+ {
+  "l": "en",
   "k": "977128b2",
   "t": "bird"
  },
@@ -2656,6 +3511,11 @@
  },
  {
   "l": "en",
+  "k": "dcb746fb",
+  "t": "boat"
+ },
+ {
+  "l": "en",
   "k": "c1948a38",
   "t": "book"
  },
@@ -2663,6 +3523,11 @@
   "l": "en",
   "k": "70c67e32",
   "t": "box"
+ },
+ {
+  "l": "en",
+  "k": "c8647fe5",
+  "t": "bread"
  },
  {
   "l": "en",
@@ -2701,6 +3566,16 @@
  },
  {
   "l": "en",
+  "k": "8aea8859",
+  "t": "cake"
+ },
+ {
+  "l": "en",
+  "k": "f1d8645e",
+  "t": "candy"
+ },
+ {
+  "l": "en",
   "k": "047458e1",
   "t": "car"
  },
@@ -2708,6 +3583,11 @@
   "l": "en",
   "k": "06745c07",
   "t": "cat"
+ },
+ {
+  "l": "en",
+  "k": "a20c85a8",
+  "t": "cheese"
  },
  {
   "l": "en",
@@ -2756,6 +3636,11 @@
  },
  {
   "l": "en",
+  "k": "666e1bb3",
+  "t": "ear"
+ },
+ {
+  "l": "en",
   "k": "597d11c6",
   "t": "egg"
  },
@@ -2768,6 +3653,11 @@
   "l": "en",
   "k": "e5f12404",
   "t": "elephant"
+ },
+ {
+  "l": "en",
+  "k": "8ba8ed1a",
+  "t": "eye"
  },
  {
   "l": "en",
@@ -2793,6 +3683,11 @@
   "l": "en",
   "k": "aeb44395",
   "t": "five"
+ },
+ {
+  "l": "en",
+  "k": "2d505a99",
+  "t": "foot"
  },
  {
   "l": "en",
@@ -2841,6 +3736,11 @@
  },
  {
   "l": "en",
+  "k": "c4ba2f20",
+  "t": "hand"
+ },
+ {
+  "l": "en",
   "k": "f2bf17c2",
   "t": "hat"
  },
@@ -2856,6 +3756,11 @@
  },
  {
   "l": "en",
+  "k": "9868eebd",
+  "t": "How many?"
+ },
+ {
+  "l": "en",
   "k": "cc0c0364",
   "t": "I"
  },
@@ -2863,6 +3768,66 @@
   "l": "en",
   "k": "6f531b1e",
   "t": "ice cream"
+ },
+ {
+  "l": "en",
+  "k": "025ac3a2",
+  "t": "Is it a bee?"
+ },
+ {
+  "l": "en",
+  "k": "64a5aef1",
+  "t": "Is it a bird?"
+ },
+ {
+  "l": "en",
+  "k": "d56ce2ea",
+  "t": "Is it a cat?"
+ },
+ {
+  "l": "en",
+  "k": "62eafc77",
+  "t": "Is it a cow?"
+ },
+ {
+  "l": "en",
+  "k": "6eb963c8",
+  "t": "Is it a dog?"
+ },
+ {
+  "l": "en",
+  "k": "09c33ce7",
+  "t": "Is it a duck?"
+ },
+ {
+  "l": "en",
+  "k": "5a6cdc4e",
+  "t": "Is it a fish?"
+ },
+ {
+  "l": "en",
+  "k": "ffb8c9b2",
+  "t": "Is it a lion?"
+ },
+ {
+  "l": "en",
+  "k": "dbe2f97b",
+  "t": "Is it a monkey?"
+ },
+ {
+  "l": "en",
+  "k": "202cae4a",
+  "t": "Is it a pig?"
+ },
+ {
+  "l": "en",
+  "k": "ec27ca0c",
+  "t": "Is it a rabbit?"
+ },
+ {
+  "l": "en",
+  "k": "4a584833",
+  "t": "Is it an elephant?"
  },
  {
   "l": "en",
@@ -2896,6 +3861,11 @@
  },
  {
   "l": "en",
+  "k": "3f6ae937",
+  "t": "leg"
+ },
+ {
+  "l": "en",
   "k": "c8c141d0",
   "t": "lemon"
  },
@@ -2916,6 +3886,11 @@
  },
  {
   "l": "en",
+  "k": "888e7aa2",
+  "t": "milk"
+ },
+ {
+  "l": "en",
   "k": "6a164f08",
   "t": "monkey"
  },
@@ -2928,6 +3903,11 @@
   "l": "en",
   "k": "23e3d71a",
   "t": "mother"
+ },
+ {
+  "l": "en",
+  "k": "742581dc",
+  "t": "mouth"
  },
  {
   "l": "en",
@@ -2991,6 +3971,16 @@
  },
  {
   "l": "en",
+  "k": "97a76a65",
+  "t": "pizza"
+ },
+ {
+  "l": "en",
+  "k": "cccb0055",
+  "t": "plane"
+ },
+ {
+  "l": "en",
   "k": "9a6e02ff",
   "t": "purple"
  },
@@ -3018,6 +4008,16 @@
   "l": "en",
   "k": "40f480dc",
   "t": "red"
+ },
+ {
+  "l": "en",
+  "k": "0552c2b0",
+  "t": "rice"
+ },
+ {
+  "l": "en",
+  "k": "e67c0055",
+  "t": "rocket"
  },
  {
   "l": "en",
@@ -3086,8 +4086,23 @@
  },
  {
   "l": "en",
+  "k": "0a0a25b5",
+  "t": "tooth"
+ },
+ {
+  "l": "en",
+  "k": "78556c69",
+  "t": "train"
+ },
+ {
+  "l": "en",
   "k": "6d8b34d5",
   "t": "tree"
+ },
+ {
+  "l": "en",
+  "k": "f542bdc8",
+  "t": "truck"
  },
  {
   "l": "en",
@@ -3128,6 +4143,61 @@
   "l": "en",
   "k": "b3f501b7",
   "t": "watermelon"
+ },
+ {
+  "l": "en",
+  "k": "5a5c19b7",
+  "t": "What color is the ant?"
+ },
+ {
+  "l": "en",
+  "k": "0999b69c",
+  "t": "What color is the apple?"
+ },
+ {
+  "l": "en",
+  "k": "e18fa301",
+  "t": "What color is the banana?"
+ },
+ {
+  "l": "en",
+  "k": "a3c94340",
+  "t": "What color is the bear?"
+ },
+ {
+  "l": "en",
+  "k": "7e6b4f3f",
+  "t": "What color is the cloud?"
+ },
+ {
+  "l": "en",
+  "k": "fad4dbe4",
+  "t": "What color is the frog?"
+ },
+ {
+  "l": "en",
+  "k": "6ad0ba46",
+  "t": "What color is the grapes?"
+ },
+ {
+  "l": "en",
+  "k": "c85fc20a",
+  "t": "What color is the leaf?"
+ },
+ {
+  "l": "en",
+  "k": "49996850",
+  "t": "What color is the orange?"
+ },
+ {
+  "l": "en",
+  "k": "330f77e4",
+  "t": "What color is the pig?"
+ },
+ {
+  "l": "en",
+  "k": "7a3f6d4f",
+  "t": "What color is the whale?"
  },
  {
   "l": "en",

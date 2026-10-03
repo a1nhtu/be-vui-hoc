@@ -25,8 +25,12 @@ const SAY = {
   memory: 'Bé lật hai thẻ giống nhau thành một cặp nhé!',
   done: ['Hoan hô! Con được 1 sao!', 'Hoan hô! Con được 2 sao!', 'Hoan hô! Con được 3 sao!'],
   rest: 'Bé ơi, mình nghỉ mắt một lát nhé!',
-  test: 'Chào bé! Mình cùng học nhé.'
+  test: 'Chào bé! Mình cùng học nhé.',
+  simon: 'Bé nhìn các ô sáng lên, rồi chạm lại đúng thứ tự nhé!'
 };
+// Dòng ghi tên và ảnh gia đình ở cuối trang chính (không có file ảnh thì chỉ hiện dòng chữ)
+const CREDIT = 'Gia đình Tú – Nhung – Su – Thỏ · P. Vĩnh Hưng, Hà Nội';
+const FAMILY_PHOTO = 'img/gia-dinh.jpg';
 const SAY_EN = { test: 'Hello! Let us learn together.' };
 
 /* ---------- Dữ liệu gốc ---------- */
@@ -120,6 +124,18 @@ const RIDDLES = [
     ['Quả gì chua chua, màu vàng, pha nước rất ngon?', '🍋', '🍓🍇🍑'], ['Củ gì màu cam, thỏ rất thích?', '🥕', '🌽🍆🥔'], ['Mặc gì khi trời mưa để không bị ướt?', '🧥', '👙🩳👕'],
     ['Trời nắng nóng, bé ăn gì cho mát?', '🍦', '🍜🍞🌶️'], ['Sáng dậy, cái gì mọc ở đằng đông?', '☀️', '🌙⭐🌈'], ['Sau cơn mưa, cái gì bảy màu hiện trên trời?', '🌈', '☁️⚡❄️'],
     ['Con gì kêu ộp ộp khi trời mưa?', '🐸', '🐦🐍🐢']
+  ],
+  [
+    ['Cái gì rơi từ trên trời xuống làm ướt sân?', '🌧️', '☀️🌈⭐'], ['Con gì có tám cái chân, hay giăng tơ?', '🕷️', '🐜🐝🦋'], ['Con gì có cánh rất đẹp, hay đậu trên hoa?', '🦋', '🐛🐌🐜'],
+    ['Quả gì nhỏ, màu đỏ, mọc thành đôi?', '🍒', '🍌🍍🍉'], ['Cái gì nở ra thành gà con?', '🥚', '🍎⚽🌰'], ['Con gì to nhất dưới biển, phun nước lên cao?', '🐳', '🐟🦀🐙'],
+    ['Con gì có tám cái tua, sống dưới biển?', '🐙', '🐟🐢🦀'], ['Con gì bò ngang, có hai cái càng?', '🦀', '🐟🐸🐍'], ['Bé uống gì màu trắng để mau lớn?', '🥛', '🍵🍹☕'],
+    ['Cái gì ngọt, có nến, bé thổi vào ngày sinh nhật?', '🎂', '🍞🍕🍚']
+  ],
+  [
+    ['Xe gì có hai bánh, bé đạp bằng chân?', '🚲', '🚗🚌🚂'], ['Cái gì chạy trên đường ray, kêu tu tu xình xịch?', '🚂', '🚗✈️🚢'], ['Cái gì đi trên mặt nước, chở người qua biển?', '🚢', '🚗🚂🚲'],
+    ['Cái gì bay vút lên vũ trụ?', '🚀', '🚗🚢🚲'], ['Cái gì dùng để gọi điện cho ông bà?', '📱', '📖🔑⏰'], ['Cái gì bé đội lên đầu khi trời nắng?', '🧢', '🧦🧤👟'],
+    ['Cái gì dùng để cắt giấy?', '✂️', '✏️📏📖'], ['Cái gì phát ra ánh sáng khi trời tối?', '💡', '🔑📦🧦'], ['Cái gì bé dùng để xúc cơm ăn?', '🥄', '✂️🔑✏️'],
+    ['Cái gì bé ôm khi đi ngủ, mềm và êm?', '🧸', '🔑📏⏰']
   ]
 // tách chuỗi nhiễu thành từng emoji; thêm lại U+FE0F để ☀ ☁ ✏… luôn hiện dạng hình màu
 ].map(set => set.map(([q, a, d]) => ({ q, a, d: Array.from(d.replace(/️/g, '')).map(x => x + '️') })));
@@ -267,6 +283,105 @@ const picMemory = () => U.sample([...GROUPS.animal, ...GROUPS.fruit, ...GROUPS.v
   { pid: i, h: big(e, 'sm'), say: [] }, { pid: i, h: big(e, 'sm'), say: [] }
 ]);
 
+/* ---------- Bài bổ sung ---------- */
+const YESNO = [big('✅', 'sm'), big('❌', 'sm')];
+const seq = cells => `<div class="seq">${cells.map(c => c === '?' ? '<b class="q">?</b>' : `<b>${c}</b>`).join('')}</div>`;
+
+// Tiếng Việt
+const LOOKALIKE = [['b', 'd', 'p', 'q'], ['a', 'ă', 'â'], ['o', 'ô', 'ơ'], ['u', 'ư', 'n'], ['e', 'ê', 'c'], ['m', 'n', 'h'], ['i', 'l', 't'], ['g', 'q', 'y']];
+const viSame = () => times(8, () => {
+  const set = U.pick(LOOKALIKE), t = U.pick(set), opts = U.shuffle(set);
+  return { say: [['Chữ nào giống hệt chữ mẫu?', 'vi']], text: 'Chữ nào giống hệt chữ mẫu?', show: `<span class="big ltr sample">${t}</span>`, opts: opts.map(ltr), ans: opts.indexOf(t) };
+});
+const VI_TILES = [...new Set(VI_WORDS.flatMap(x => x.t))];
+const viMiss = () => U.sample(VI_WORDS, 8).map(x => {
+  const j = U.rnd(0, x.t.length - 1), opts = U.shuffle([x.t[j], ...U.sample(VI_TILES.filter(c => c !== x.t[j]), 2)]);
+  return { say: [[x.w + '.', 'vi'], ['Chữ nào còn thiếu?', 'vi']], text: 'Chữ nào còn thiếu?', show: big(x.e, 'sm') + seq(x.t.map((c, k) => k === j ? '?' : c)), opts: opts.map(ltr), ans: opts.indexOf(x.t[j]) };
+});
+const viRead = () => pickRounds(VI_WORDS, 8, 3, (x, opts) => ({
+  say: [['Bé chọn tiếng đúng với hình.', 'vi']], text: 'Chọn tiếng đúng với hình', show: big(x.e), opts: opts.map(o => `<span class="word">${o.w}</span>`)
+}));
+
+// Toán
+const mMixed = () => times(8, () => {
+  const [it, o1, o2] = U.sample(COUNTABLE, 3), n = U.rnd(1, 6), o = numOpts(n, 1, 8);
+  const pics = U.shuffle([...Array(n).fill(it.e), ...Array(U.rnd(1, 3)).fill(o1.e), ...Array(U.rnd(1, 3)).fill(o2.e)]);
+  return { say: [[`Có bao nhiêu ${it.n}?`, 'vi']], text: `Có bao nhiêu ${it.n}?`, show: `<div class="group">${pics.map(e => `<i>${e}</i>`).join('')}</div>`, opts: o.opts, ans: o.ans };
+});
+const mNeighbor = () => times(8, () => {
+  const before = Math.random() < 0.5, n = before ? U.rnd(2, 10) : U.rnd(1, 9), ans = before ? n - 1 : n + 1, o = numOpts(ans, 0, 11);
+  const q = `Số nào đứng liền ${before ? 'trước' : 'sau'} số ${n}?`;
+  return { say: [[q, 'vi']], text: q, show: seq(before ? ['?', n, n + 1] : [n - 1, n, '?']), opts: o.opts, ans: o.ans };
+});
+const mSign = () => times(8, () => {
+  const a = U.rnd(1, 10), b = Math.random() < 0.2 ? a : U.rnd(1, 10);
+  return { say: [['Bé chọn dấu đúng.', 'vi']], text: 'Chọn dấu: lớn hơn, bé hơn hay bằng?', show: seq([a, '?', b]), opts: ['&gt;', '&lt;', '='].map(ltr), ans: a > b ? 0 : a < b ? 1 : 2 };
+});
+const mOrder = () => times(6, () => ({
+  say: [['Bé chạm các số từ bé đến lớn.', 'vi']], text: 'Chạm các số từ bé đến lớn', show: '',
+  target: U.sample(times(10, i => i + 1), 4).sort((a, b) => a - b).map(String), extra: [], after: []
+}));
+const mBond = () => times(8, () => {
+  const n = U.rnd(3, 10), a = U.rnd(1, n - 1), o = numOpts(n - a, 1, 9);
+  return { say: [[`${n} gồm ${a} và mấy?`, 'vi']], text: `${n} gồm ${a} và ?`, show: `<div class="group">${times(n, i => `<i class="${i >= a ? 'dim' : ''}">❤️</i>`).join('')}</div>`, opts: o.opts, ans: o.ans };
+});
+const mTrueFalse = () => times(8, () => {
+  const a = U.rnd(1, 5), b = U.rnd(1, 5), ok = Math.random() < 0.5, c = ok ? a + b : a + b + U.pick([-1, 1, 2]);
+  return { say: [['Đúng hay sai?', 'vi']], text: 'Phép tính này đúng hay sai?', show: seq([a, '+', b, '=', c]), opts: YESNO, ans: ok ? 0 : 1 };
+});
+
+// Tiếng Anh
+const EN_BODY = voc([['eye', 'mắt', '👁️'], ['ear', 'tai', '👂'], ['nose', 'mũi', '👃'], ['mouth', 'miệng', '👄'], ['hand', 'bàn tay', '✋'], ['foot', 'bàn chân', '🦶'], ['tooth', 'răng', '🦷'], ['leg', 'chân', '🦵']]);
+const EN_FOOD = voc([['bread', 'bánh mì', '🍞'], ['milk', 'sữa', '🥛'], ['rice', 'cơm', '🍚'], ['egg', 'trứng', '🥚'], ['cheese', 'phô mai', '🧀'], ['cake', 'bánh ngọt', '🍰'], ['candy', 'kẹo', '🍬'], ['pizza', 'bánh pizza', '🍕']]);
+const EN_VEHICLES = voc([['car', 'ô tô', '🚗'], ['bus', 'xe buýt', '🚌'], ['bike', 'xe đạp', '🚲'], ['train', 'tàu hoả', '🚂'], ['plane', 'máy bay', '✈️'], ['boat', 'con thuyền', '⛵'], ['truck', 'xe tải', '🚚'], ['rocket', 'tên lửa', '🚀']]);
+const EN_COLOR_OF = [['banana', '🍌', 'yellow'], ['apple', '🍎', 'red'], ['leaf', '🍃', 'green'], ['frog', '🐸', 'green'], ['orange', '🍊', 'orange'], ['grapes', '🍇', 'purple'],
+  ['pig', '🐷', 'pink'], ['cloud', '☁️', 'white'], ['bear', '🐻', 'brown'], ['whale', '🐳', 'blue'], ['ant', '🐜', 'black']];
+const enColorOf = () => U.sample(EN_COLOR_OF, 8).map(([w, e, c]) => {
+  const right = EN_COLORS.find(x => x.w === c), opts = U.shuffle([right, ...U.sample(EN_COLORS.filter(x => x !== right), 3)]);
+  return { say: [[`What color is the ${w}?`, 'en']], text: `What color is the ${w}?`, show: big(e), opts: opts.map(o => sw(o.hex)), ans: opts.indexOf(right) };
+});
+const enHowMany = () => times(8, () => {
+  const it = U.pick(COUNTABLE), n = U.rnd(1, 10), o = numOpts(n, 1, 10);
+  return { say: [['How many?', 'en']], text: 'How many? – Có bao nhiêu?', show: group(it.e, n), opts: o.opts, ans: o.ans };
+});
+const an = w => (/^[aeiou]/.test(w) ? 'an ' : 'a ') + w;
+const enYesNo = () => U.sample(EN_ANIMALS, 8).map(x => {
+  const ok = Math.random() < 0.5, asked = ok ? x : EN_ANIMALS[(EN_ANIMALS.indexOf(x) + 1) % EN_ANIMALS.length];
+  return { say: [[`Is it ${an(asked.w)}?`, 'en']], text: `Is it ${an(asked.w)}?`, show: big(x.e), opts: YESNO, ans: ok ? 0 : 1 };
+});
+
+// Câu đố & trò chơi
+const SHADOWS = ['🐘', '🦒', '🐢', '🐟', '🦋', '🐓', '🐇', '🐈', '✈️', '🚲', '🍌', '🍎', '☂️', '🌳', '🏠', '⭐', '🚗', '🔑'];
+const shadow = () => pickRounds(SHADOWS, 8, 4, (x, opts) => ({
+  say: [['Đây là bóng của hình nào?', 'vi']], text: 'Đây là bóng của hình nào?', show: big(x, 'shadow'), opts: opts.map(o => big(o, 'sm'))
+}));
+const sizeCmp = () => times(8, () => {
+  const e = U.pick(['🐘', '🐭', '🍎', '🌳', '⚽', '🐟', '🏠', '⭐']), bigFirst = Math.random() < 0.5, small = Math.random() < 0.5, word = small ? 'nhỏ hơn' : 'to hơn';
+  const pic = isBig => `<span style="font-size:${isBig ? 4.6 : 2}rem">${e}</span>`;
+  return { say: [[`Hình nào ${word}?`, 'vi']], text: `Hình nào ${word}?`, show: '', opts: [pic(bigFirst), pic(!bigFirst)], ans: (small ? !bigFirst : bigFirst) ? 0 : 1 };
+});
+const SAME_SETS = [['😀', '😃', '😄', '😁'], ['🐶', '🐺', '🦊', '🐱'], ['🍎', '🍅', '🍒', '🍓'], ['🌕', '🌖', '🌗', '🌘'], ['🕐', '🕒', '🕕', '🕘'], ['⬆️', '➡️', '⬇️', '⬅️'], ['🐟', '🐠', '🐡', '🐬'], ['🌷', '🌹', '🌺', '🌸']];
+const findSame = () => times(8, () => {
+  const set = U.pick(SAME_SETS), t = U.pick(set), opts = U.shuffle(set);
+  return { say: [['Hình nào giống hệt hình mẫu?', 'vi']], text: 'Hình nào giống hệt hình mẫu?', show: `<span class="big sample">${t}</span>`, opts: opts.map(o => big(o, 'sm')), ans: opts.indexOf(t) };
+});
+const FACTS = [['Con cá biết bơi.', '🐟', 1], ['Con voi biết bay.', '🐘', 0], ['Mặt trời mọc vào ban đêm.', '☀️', 0], ['Con chim có hai cánh.', '🐦', 1], ['Quả chuối chín màu vàng.', '🍌', 1],
+  ['Con mèo kêu gâu gâu.', '🐱', 0], ['Con gà mái đẻ trứng.', '🐔', 1], ['Xe đạp có bốn bánh.', '🚲', 0], ['Con ong làm ra mật.', '🐝', 1], ['Tuyết thì nóng.', '❄️', 0],
+  ['Con rùa bò rất nhanh.', '🐢', 0], ['Quả dưa hấu bé hơn quả nho.', '🍉', 0], ['Con bò cho chúng ta sữa.', '🐄', 1], ['Ban đêm có mặt trăng.', '🌙', 1], ['Con chó có sáu chân.', '🐶', 0], ['Cây cần nước để lớn.', '🌳', 1]];
+const facts = () => U.sample(FACTS, 8).map(([t, e, ok]) => ({ say: [[t, 'vi'], ['Đúng hay sai?', 'vi']], text: t, show: big(e), opts: YESNO, ans: ok ? 0 : 1 }));
+const simon = () => [2, 2, 3, 3, 4, 4];
+// Đập chuột: cùng kiểu dữ liệu với bóng bay, chỉ khác lời dẫn
+const viMole = () => U.sample(VI, 4).map(l => ({
+  say: [['Bé hãy đập chuột mang chữ ' + l.s, 'vi']], text: 'Đập chuột mang chữ', target: l.c, others: U.sample(VI.filter(x => x !== l), 6).map(x => x.c)
+}));
+const mMole = () => U.sample(times(10, i => i + 1), 4).map(n => ({
+  say: [['Bé hãy đập chuột mang số ' + n, 'vi']], text: 'Đập chuột mang số', target: String(n),
+  others: U.sample(times(10, i => i + 1).filter(x => x !== n), 6).map(String)
+}));
+const enMole = () => U.sample(EN_ABC, 4).map(l => ({
+  say: [['Bé hãy đập chuột mang chữ', 'vi'], [l.c, 'en']], text: 'Đập chuột mang chữ', target: l.c, others: U.sample(EN_ABC.filter(x => x !== l), 6).map(x => x.c)
+}));
+
 /* ---------- Danh sách môn & bài ---------- */
 const L = (id, icon, title, type, make) => ({ id, icon, title, type, make });
 
@@ -286,7 +401,11 @@ const SUBJECTS = [
       L('vi-tone1', '🎵', 'Làm quen 6 thanh', 'learn', viToneLearn),
       L('vi-tone2', '🎶', 'Nghe thanh chọn tiếng', 'choice', viTone),
       L('vi-build1', '🧩', 'Ghép vần', 'build', viBuild1),
-      L('vi-build2', '🧱', 'Ghép tiếng có hình', 'build', viBuild2)
+      L('vi-build2', '🧱', 'Ghép tiếng có hình', 'build', viBuild2),
+      L('vi-mole', '🐹', 'Đập chuột chữ cái', 'mole', viMole),
+      L('vi-same', '🔎', 'Tìm chữ giống mẫu', 'choice', viSame),
+      L('vi-miss', '❓', 'Chữ nào còn thiếu?', 'choice', viMiss),
+      L('vi-read', '📚', 'Chọn tiếng đúng với hình', 'choice', viRead)
     ]
   },
   {
@@ -305,7 +424,14 @@ const SUBJECTS = [
       L('m-pattern', '🧠', 'Tìm quy luật', 'choice', mPattern),
       L('m-add10', '➕', 'Cộng trong phạm vi 10', 'choice', mAdd(10)),
       L('m-sub10', '➖', 'Trừ trong phạm vi 10', 'choice', mSub(10)),
-      L('m-count20', '🏆', 'Thử thách: đếm đến 20', 'choice', mCount(11, 20))
+      L('m-count20', '🏆', 'Thử thách: đếm đến 20', 'choice', mCount(11, 20)),
+      L('m-mole', '🐹', 'Đập chuột số', 'mole', mMole),
+      L('m-mixed', '🧺', 'Đếm hình lẫn lộn', 'choice', mMixed),
+      L('m-neighbor', '↔️', 'Số liền trước – liền sau', 'choice', mNeighbor),
+      L('m-order', '📶', 'Xếp số từ bé đến lớn', 'build', mOrder),
+      L('m-sign', '⚖️', 'Dấu lớn – bé – bằng', 'choice', mSign),
+      L('m-bond', '💞', 'Tách – gộp số', 'choice', mBond),
+      L('m-tf', '✅', 'Phép tính đúng hay sai?', 'choice', mTrueFalse)
     ]
   },
   {
@@ -331,7 +457,18 @@ const SUBJECTS = [
       L('en-thi1', '🏠', 'Đồ vật quanh bé', 'learn', enLearn(EN_THINGS)),
       L('en-thi2', '👂', 'Nghe chọn đồ vật', 'choice', enListen(EN_THINGS)),
       L('en-spell3', '🧩', 'Xếp chữ: từ 3 chữ', 'build', enSpell(EN_SPELL3)),
-      L('en-spell4', '🧱', 'Xếp chữ: từ 4 chữ', 'build', enSpell(EN_SPELL4))
+      L('en-spell4', '🧱', 'Xếp chữ: từ 4 chữ', 'build', enSpell(EN_SPELL4)),
+      L('en-mole', '🐹', 'Đập chuột ABC', 'mole', enMole),
+      L('en-body1', '👀', 'Cơ thể bé', 'learn', enLearn(EN_BODY)),
+      L('en-body2', '👂', 'Nghe chọn bộ phận', 'choice', enListen(EN_BODY)),
+      L('en-food1', '🍞', 'Đồ ăn', 'learn', enLearn(EN_FOOD)),
+      L('en-food2', '👂', 'Nghe chọn đồ ăn', 'choice', enListen(EN_FOOD)),
+      L('en-veh1', '🚗', 'Xe cộ', 'learn', enLearn(EN_VEHICLES)),
+      L('en-veh2', '👂', 'Nghe chọn xe', 'choice', enListen(EN_VEHICLES)),
+      L('en-colof', '🎨', 'What color is it?', 'choice', enColorOf),
+      L('en-many', '🔢', 'How many?', 'choice', enHowMany),
+      L('en-yesno', '🙋', 'Yes or No?', 'choice', enYesNo),
+      L('en-fru3', '🃏', 'Lật thẻ trái cây', 'memory', enMemory(EN_FRUITS))
     ]
   },
   {
@@ -341,9 +478,16 @@ const SUBJECTS = [
       L('f-odd', '🔍', 'Tìm hình khác loại', 'choice', oddOne),
       L('f-rid2', '🎁', 'Đố bé cái gì?', 'choice', riddle(1)),
       L('f-mem', '🃏', 'Lật thẻ trí nhớ', 'memory', picMemory),
-      L('f-rid3', '🌈', 'Đố vui quanh em', 'choice', riddle(2))
+      L('f-rid3', '🌈', 'Đố vui quanh em', 'choice', riddle(2)),
+      L('f-shadow', '👤', 'Bóng của ai?', 'choice', shadow),
+      L('f-simon', '🚦', 'Nhớ dãy màu', 'simon', simon),
+      L('f-rid4', '🌊', 'Đố vui thiên nhiên', 'choice', riddle(3)),
+      L('f-same', '👯', 'Tìm hình giống mẫu', 'choice', findSame),
+      L('f-size', '🐘', 'To hơn – nhỏ hơn', 'choice', sizeCmp),
+      L('f-facts', '🤔', 'Đúng hay sai?', 'choice', facts),
+      L('f-rid5', '🚀', 'Đố vui đồ vật', 'choice', riddle(4))
     ]
   }
 ];
 
-const STICKERS = Array.from('🦄🐼🦊🐯🐨🐸🐵🦁🐰🐶🐱🐧🐬🦋🐢🐙🦖🐳🦉🐝🌈⭐🌙🌻🍓🍉🍦🍩🍭🎂🚀🚂🚁🚒🏰🎠🎡🎨🎸🎺⚽🏀🎯🪁🧸👑💎🎁🏆🥇🎈🎉🌟🍀🌺');
+const STICKERS = Array.from('🦄🐼🦊🐯🐨🐸🐵🦁🐰🐶🐱🐧🐬🦋🐢🐙🦖🐳🦉🐝🌈⭐🌙🌻🍓🍉🍦🍩🍭🎂🚀🚂🚁🚒🏰🎠🎡🎨🎸🎺⚽🏀🎯🪁🧸👑💎🎁🏆🥇🎈🎉🌟🍀🌺🐞🐠🦜🦩🦔🍒🍍🥕🌽🍪🍿🎪🎢⛵🚲🛴🌋🌵🌴🍄🌷⛄🔔🎵🎹🥁🧩🎮📚🍰🐹');
