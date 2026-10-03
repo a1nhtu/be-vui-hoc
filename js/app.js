@@ -19,14 +19,15 @@
   const loadVoices = () => { voices = synth ? synth.getVoices() : []; };
   if (synth) { loadVoices(); synth.addEventListener && synth.addEventListener('voiceschanged', loadVoices); }
   const findVoice = lang => voices.find(v => v.lang.replace('_', '-') === lang) || voices.find(v => v.lang.slice(0, 2) === lang.slice(0, 2));
-  // Tiếng Việt: phát file mp3 thu sẵn (giọng HoaiMy); câu nào chưa có file hoặc tiếng Anh thì dùng giọng của máy.
-  const hasClip = text => typeof AUDIO_VI !== 'undefined' && AUDIO_VI.has(audioKey(text));
+  // Phát file mp3 thu sẵn (Việt: HoaiMy, Anh: Jenny); câu nào chưa có file thì dùng giọng của máy.
+  const hasClip = (text, l) => typeof AUDIO !== 'undefined' && !!AUDIO[l] && AUDIO[l].has(audioKey(text));
   const player = new Audio(), clips = new Map();
   let speakId = 0;
   // Tải mp3 bằng fetch để bản lưu ngoại tuyến dùng được trên mọi trình duyệt
-  const clipUrl = key => {
-    if (!clips.has(key)) clips.set(key, fetch(`audio/vi/${key}.mp3`).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(b => URL.createObjectURL(b)));
-    return clips.get(key);
+  const clipUrl = (text, l) => {
+    const path = `audio/${l}/${audioKey(text)}.mp3`;
+    if (!clips.has(path)) clips.set(path, fetch(path).then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(b => URL.createObjectURL(b)));
+    return clips.get(path);
   };
   function tts(text, l, next) {
     if (!synth) return next();
@@ -37,19 +38,21 @@
     synth.speak(u);
   }
   function stopSpeak() { speakId++; player.pause(); synth && synth.cancel(); }
-  function speak(items) {
-    if (!S.voice || !items || !items.length) return;
+  // done: gọi khi đọc xong cả chuỗi (không gọi nếu bị câu khác chen ngang)
+  function speak(items, done) {
+    if (!S.voice || !items || !items.length) { if (done) later(done, 900); return; }
     stopSpeak();
     const my = speakId;
     const run = k => {
-      if (my !== speakId || k >= items.length) return;
+      if (my !== speakId) return;
+      if (k >= items.length) { if (done) done(); return; }
       const [text, l] = items[k];
       let moved = false;
       const step = fn => () => { if (moved || my !== speakId) return; moved = true; fn(); };
       const next = step(() => run(k + 1));
-      if (l !== 'vi' || !hasClip(text)) return tts(text, l, next);
+      if (!hasClip(text, l)) return tts(text, l, next);
       const fallback = step(() => tts(text, l, () => run(k + 1)));
-      clipUrl(audioKey(text)).then(url => {
+      clipUrl(text, l).then(url => {
         if (my !== speakId) return;
         player.onended = next; player.onerror = fallback;
         player.src = url;
@@ -80,7 +83,14 @@
     pop() { tone(520, 0.08, 0, 'square', 0.07); },
     win() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.25, i * 0.14)); }
   };
-  const praise = () => speak([[U.pick(SAY.praise), 'vi']]);
+  // Đọc xong mới sang bước kế, để câu khen không bị câu hỏi mới cắt ngang; max là thời gian chờ tối đa.
+  function sayThen(items, fn, max = 6000) {
+    let gone = false;
+    const once = () => { if (gone) return; gone = true; fn(); };
+    speak(items, () => later(once, 300));
+    later(once, max);
+  }
+  const praiseThen = fn => sayThen([[U.pick(SAY.praise), 'vi']], fn);
   const retry = () => speak([[U.pick(SAY.retry), 'vi']]);
 
   /* ---------- Tiến độ ---------- */
@@ -216,8 +226,8 @@
       $$('.opt').forEach(b => b.onclick = () => {
         if (+b.dataset.k === r.ans) {
           $$('.opt').forEach(x => x.disabled = true);
-          b.classList.add('right'); sfx.ok(); praise();
-          i++; later(show, 1200);
+          b.classList.add('right'); sfx.ok();
+          i++; praiseThen(show);
         } else {
           b.disabled = true; b.classList.add('wrong'); mistakes++; sfx.no(); retry();
         }
@@ -247,7 +257,7 @@
           if (b.classList.contains('popped')) return;
           b.classList.add('popped'); sfx.pop(); got++;
           $('#got').textContent = `${got}/${NEED}`;
-          if (got >= NEED) { sfx.ok(); praise(); i++; later(show, 1300); }
+          if (got >= NEED) { sfx.ok(); i++; praiseThen(show); }
         } else { mistakes++; sfx.no(); shake(b); }
       });
       ctx.replay();
@@ -301,7 +311,7 @@
           b.disabled = true; b.classList.add('used'); sfx.pop(); pos++;
           if (pos === r.target.length) {
             $$('.tile').forEach(x => x.disabled = true);
-            sfx.ok(); speak(r.after); i++; later(show, 1500 + r.target.length * 500);
+            sfx.ok(); i++; sayThen(r.after, show, 10000);
           }
         } else { mistakes++; sfx.no(); shake(b); }
       });
@@ -378,7 +388,6 @@
   function parent() {
     clearScreen();
     document.body.style.setProperty('--accent', '#5b6b7a');
-    const hasEn = !!voices.find(v => v.lang.slice(0, 2) === 'en');
     app.innerHTML = `
       <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>Góc bố mẹ</h2><span></span></header>
       <main class="parent">
@@ -393,8 +402,7 @@
         </section>
         <section>
           <h3>Giọng đọc trên máy này</h3>
-          <p>Tiếng Việt: <b>giọng thu sẵn</b>, máy nào cũng nghe giống nhau · Tiếng Anh: <b>${hasEn ? 'giọng của máy' : 'máy chưa có giọng'}</b></p>
-          ${hasEn ? '' : '<p class="warn">Máy này chưa có giọng tiếng Anh nên phần nghe tiếng Anh có thể im lặng. Bố mẹ thêm giọng English trong phần cài đặt giọng nói của máy.</p>'}
+          <p>Tiếng Việt và tiếng Anh đều là <b>giọng thu sẵn</b>, máy nào cũng nghe giống nhau.</p>
           <div class="row"><button class="btn ghost" id="t-vi">Thử tiếng Việt</button><button class="btn ghost" id="t-en">Thử tiếng Anh</button></div>
         </section>
         <section>
@@ -416,7 +424,7 @@
     $('#p-voice').onchange = e => { S.voice = e.target.checked; save(); };
     $('#p-unlock').onchange = e => { S.unlockAll = e.target.checked; save(); };
     $('#t-vi').onclick = () => speak([[SAY.test, 'vi']]);
-    $('#t-en').onclick = () => speak([['Hello! Let us learn together.', 'en']]);
+    $('#t-en').onclick = () => speak([[SAY_EN.test, 'en']]);
     $('#p-reset').onclick = () => {
       const m = modal(`<h2>Xoá toàn bộ tiến độ?</h2><p>Sao và sticker của bé sẽ mất, không khôi phục được.</p>
         <div class="row"><button class="btn ghost" id="r-no">Giữ lại</button><button class="btn danger" id="r-yes">Xoá</button></div>`);

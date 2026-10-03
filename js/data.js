@@ -10,7 +10,7 @@ const U = {
   up(s) { return s.toLocaleUpperCase('vi'); }
 };
 
-// Tên file mp3 của một câu đọc tiếng Việt (dùng chung cho app và tools/gen-audio.mjs)
+// Tên file mp3 của một câu đọc (dùng chung cho app và tools/gen-audio.mjs)
 function audioKey(t) {
   let h = 0x811c9dc5;
   for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193); }
@@ -27,6 +27,7 @@ const SAY = {
   rest: 'Bé ơi, mình nghỉ mắt một lát nhé!',
   test: 'Chào bé! Mình cùng học nhé.'
 };
+const SAY_EN = { test: 'Hello! Let us learn together.' };
 
 /* ---------- Dữ liệu gốc ---------- */
 

@@ -3,7 +3,7 @@
 Web app trò chơi học tập cho bé 5 tuổi chuẩn bị vào lớp 1: **Tiếng Việt, Toán, Tiếng Anh** và **Câu đố vui**.
 
 - 53 bài, 5 kiểu trò chơi: thẻ học, nghe – chọn đáp án, bóng bay, lật thẻ trí nhớ, ghép chữ.
-- Mọi câu hỏi đều được đọc thành tiếng: tiếng Việt bằng giọng thu sẵn, tiếng Anh bằng giọng của máy.
+- Mọi câu hỏi đều được đọc thành tiếng: cả tiếng Việt và tiếng Anh đều bằng giọng thu sẵn.
 - Thưởng sao và sticker, mở khoá bài theo thứ tự.
 - Góc bố mẹ: đặt tên bé, nhắc nghỉ mắt, xem tiến độ, mở khoá tất cả.
 - Không đăng nhập, không quảng cáo, không thu thập dữ liệu: tiến độ lưu ngay trên máy của bé.
@@ -38,11 +38,11 @@ Phần máy chạy trò chơi nằm trong `js/app.js`, giao diện trong `css/st
 
 ## Giọng đọc
 
-- **Tiếng Việt:** file mp3 thu sẵn bằng Edge-TTS, giọng HoaiMy, nằm trong `audio/vi/`. Máy nào cũng nghe giống nhau, không phụ thuộc giọng của thiết bị. Tên bé không được đọc thành tiếng (chỉ hiện trên màn hình) vì giọng là file thu sẵn.
-- **Tiếng Anh:** dùng giọng có sẵn của trình duyệt.
-- Câu tiếng Việt nào chưa có file mp3 thì app tự dùng giọng của máy.
+- Giọng đọc là file mp3 thu sẵn bằng Edge-TTS: **tiếng Việt giọng HoaiMy** (`audio/vi/`), **tiếng Anh giọng Jenny** (`audio/en/`). Máy nào cũng nghe giống nhau, không phụ thuộc giọng của thiết bị.
+- Tên bé không được đọc thành tiếng (chỉ hiện trên màn hình) vì giọng là file thu sẵn.
+- Câu nào chưa có file mp3 thì app tự dùng giọng của máy.
 
-Sau khi sửa nội dung tiếng Việt trong `js/data.js`, thu lại giọng cho các câu mới:
+Sau khi sửa nội dung trong `js/data.js`, thu lại giọng cho các câu mới:
 
 ```bash
 node tools/gen-audio.mjs collect
