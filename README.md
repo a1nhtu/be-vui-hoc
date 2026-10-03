@@ -5,7 +5,8 @@ Web app trò chơi học tập cho bé 5 tuổi chuẩn bị vào lớp 1: **Ti�
 - 82 bài, 7 kiểu trò chơi: thẻ học, nghe – chọn đáp án, bóng bay, đập chuột, lật thẻ trí nhớ, ghép chữ / xếp số, nhớ dãy màu.
 - Mọi câu hỏi đều được đọc thành tiếng: cả tiếng Việt và tiếng Anh đều bằng giọng thu sẵn.
 - Thưởng sao và sticker, mở khoá bài theo thứ tự.
-- Góc bố mẹ: đặt tên bé, nhắc nghỉ mắt, xem tiến độ, mở khoá tất cả.
+- Mỗi bé một hồ sơ riêng (tên, hình đại diện); mỗi bài chấm điểm thang 10, có tổng điểm và bảng điểm.
+- Góc bố mẹ: quản lý hồ sơ các bé, bảng điểm từng bài, nhắc nghỉ mắt, mở khoá tất cả.
 - Không đăng nhập, không quảng cáo, không thu thập dữ liệu: tiến độ lưu ngay trên máy của bé.
 - Cài được ra màn hình chính như một ứng dụng (PWA), chạy được khi mất mạng sau lần mở đầu.
 

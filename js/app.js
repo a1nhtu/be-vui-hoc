@@ -7,11 +7,30 @@
 
   /* ---------- Lưu tiến độ (ngay trên máy của bé) ---------- */
   const KEY = 'bevuihoc_v1';
-  const DEFAULTS = { stars: {}, stickers: [], name: '', limit: 20, voice: true, unlockAll: false };
+  const AVATARS = ['🐰', '🐻', '🐱', '🐶', '🦊', '🐼', '🐯', '🦄', '🐸', '🐵'];
+  // Mỗi bé một hồ sơ riêng: sao, điểm cao nhất, số lần chơi và sticker
+  const newKid = (name, avatar) => ({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, avatar, stars: {}, scores: {}, plays: {}, stickers: [] });
+  const DEFAULTS = { kids: [], cur: '', limit: 20, voice: true, unlockAll: false };
   let S = { ...DEFAULTS };
-  try { S = { ...DEFAULTS, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) { /* chế độ riêng tư: chơi không lưu */ }
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || '{}');
+    S = { ...DEFAULTS, ...raw };
+    if (!Array.isArray(raw.kids)) {
+      // Bản cũ chỉ lưu một bé: chuyển tiến độ sang hồ sơ đầu tiên, quy sao ra điểm
+      S.kids = [];
+      if (raw.name || Object.keys(raw.stars || {}).length) {
+        const k = newKid(raw.name || '', '🐼');
+        k.stars = raw.stars || {}; k.stickers = raw.stickers || [];
+        for (const id in k.stars) { k.scores[id] = [0, 6, 8, 10][k.stars[id]] || 0; k.plays[id] = 1; }
+        S.kids = [k]; S.cur = k.id;
+      }
+      delete S.stars; delete S.stickers; delete S.name;
+    }
+  } catch (e) { /* chế độ riêng tư: chơi không lưu */ }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* bỏ qua */ } };
-  const kid = () => S.name.trim() || 'bé';
+  const GUEST = newKid('', '🐼');
+  const K = () => S.kids.find(k => k.id === S.cur) || S.kids[0] || GUEST;
+  const kid = () => K().name.trim() || 'bé';
 
   /* ---------- Giọng đọc & âm thanh ---------- */
   const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
@@ -94,9 +113,15 @@
   const retry = () => speak([[U.pick(SAY.retry), 'vi']]);
 
   /* ---------- Tiến độ ---------- */
-  const starsOf = id => S.stars[id] || 0;
-  const subjectStars = s => s.lessons.reduce((a, l) => a + starsOf(l.id), 0);
-  const totalStars = () => SUBJECTS.reduce((a, s) => a + subjectStars(s), 0);
+  const starsOf = (id, k = K()) => k.stars[id] || 0;
+  const subjectStars = (s, k = K()) => s.lessons.reduce((a, l) => a + starsOf(l.id, k), 0);
+  const totalStars = (k = K()) => SUBJECTS.reduce((a, s) => a + subjectStars(s, k), 0);
+  // Điểm mỗi bài theo thang 10: mỗi lần chọn sai trừ 1 điểm, thấp nhất 1 điểm. Tổng điểm = cộng điểm cao nhất của từng bài.
+  const scoreFor = mistakes => Math.max(1, 10 - mistakes);
+  const scoreOf = (id, k = K()) => k.scores[id] || 0;
+  const subjectScore = (s, k = K()) => s.lessons.reduce((a, l) => a + scoreOf(l.id, k), 0);
+  const totalScore = (k = K()) => SUBJECTS.reduce((a, s) => a + subjectScore(s, k), 0);
+  const LESSON_COUNT = SUBJECTS.reduce((a, s) => a + s.lessons.length, 0);
   const unlocked = (s, i) => S.unlockAll || i === 0 || starsOf(s.lessons[i - 1].id) > 0;
   const starRow = n => '<span class="stars">' + [1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}">★</i>`).join('') + '</span>';
 
@@ -106,6 +131,7 @@
   function clearScreen() { timers.forEach(clearTimeout); timers = []; stopSpeak(); }
 
   function home() {
+    if (!S.kids.length) return kidForm(true);
     clearScreen();
     document.body.style.setProperty('--accent', '#ffb703');
     app.innerHTML = `
@@ -114,6 +140,10 @@
         <div><h1>Chào ${esc(kid())}!</h1><p>Hôm nay mình học gì nào?</p></div>
         <div class="total" aria-label="Tổng số sao">★ ${totalStars()}</div>
       </header>
+      <div class="kidbar">
+        <button class="chip" id="kid" aria-label="Đổi bé"><span class="av">${K().avatar}</span> ${esc(kid())} <small>Đổi bé ▾</small></button>
+        <span class="chip score" aria-label="Tổng điểm">🏅 ${totalScore()} điểm</span>
+      </div>
       <main class="subjects">
         ${SUBJECTS.map(s => `
           <button class="subject" data-s="${s.id}" style="--c:${s.color}">
@@ -124,16 +154,61 @@
           </button>`).join('')}
       </main>
       <footer class="dock">
-        <button class="btn ghost" id="stickers">🎁 Sticker của bé (${S.stickers.length})</button>
+        <button class="btn ghost" id="stickers">🎁 Sticker của bé (${K().stickers.length})</button>
         <button class="btn ghost" id="parent">👨‍👩‍👧 Góc bố mẹ</button>
       </footer>
       <figure class="family"><img id="family" src="${FAMILY_PHOTO}" alt="Ảnh gia đình"><figcaption>${esc(CREDIT)}</figcaption></figure>`;
     // Ảnh chỉ hiện khi tải được; chưa có file ảnh thì chỉ còn dòng chữ
     $('#family').onload = e => e.target.classList.add('ok');
     $('#mascot').onclick = () => speak([[SAY.hello, 'vi']]);
+    $('#kid').onclick = kids;
     $$('.subject').forEach(b => b.onclick = () => subject(b.dataset.s));
     $('#stickers').onclick = stickerBook;
     $('#parent').onclick = () => gate(parent);
+  }
+
+  // Chọn bé đang học
+  function kids() {
+    clearScreen();
+    document.body.style.setProperty('--accent', '#ffb703');
+    app.innerHTML = `
+      <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>Ai đang học nào?</h2><span></span></header>
+      <main class="kids">
+        ${S.kids.map(k => `<button class="kid ${k.id === K().id ? 'cur' : ''}" data-id="${k.id}">
+          <span class="av">${k.avatar}</span><b>${esc(k.name.trim() || 'Bé')}</b><span>★ ${totalStars(k)} · 🏅 ${totalScore(k)} điểm</span>
+        </button>`).join('')}
+        <button class="kid add" id="add"><span class="av">＋</span><b>Thêm bé</b><span>Tạo hồ sơ mới</span></button>
+      </main>`;
+    $('#back').onclick = home;
+    $$('.kid[data-id]').forEach(b => b.onclick = () => { S.cur = b.dataset.id; save(); home(); });
+    $('#add').onclick = () => kidForm(false);
+  }
+
+  // Khai báo tên và hình đại diện của bé (lần mở đầu tiên hoặc khi thêm bé)
+  function kidForm(first) {
+    clearScreen();
+    document.body.style.setProperty('--accent', '#ffb703');
+    let avatar = AVATARS.find(a => !S.kids.some(k => k.avatar === a)) || AVATARS[0];
+    app.innerHTML = `
+      ${first ? '' : '<header class="bar"><button class="round" id="back" aria-label="Quay lại">←</button><h2>Thêm bé</h2><span></span></header>'}
+      <main class="welcome">
+        ${first ? '<div class="r-mascot">🐼</div><h1>Chào mừng đến với Bé Vui Học!</h1>' : ''}
+        <label for="k-name">Bé tên là gì?</label>
+        <input id="k-name" maxlength="20" placeholder="Ví dụ: Su" autocomplete="off">
+        <p>Bé chọn một bạn đồng hành</p>
+        <div class="avatars">${AVATARS.map(a => `<button class="avatar ${a === avatar ? 'on' : ''}" data-a="${a}">${a}</button>`).join('')}</div>
+        <button class="btn big" id="k-ok">Bắt đầu học →</button>
+      </main>`;
+    if (!first) $('#back').onclick = kids;
+    $$('.avatar').forEach(b => b.onclick = () => { avatar = b.dataset.a; $$('.avatar').forEach(x => x.classList.toggle('on', x === b)); });
+    const ok = () => {
+      const name = $('#k-name').value.trim();
+      if (!name) { shake($('#k-name')); $('#k-name').focus(); return; }
+      const k = newKid(name, avatar);
+      S.kids.push(k); S.cur = k.id; save(); home();
+    };
+    $('#k-ok').onclick = ok;
+    $('#k-name').onkeydown = e => { if (e.key === 'Enter') ok(); };
   }
 
   function subject(sid) {
@@ -394,13 +469,16 @@
   function finish(ctx, mistakes) {
     clearScreen();
     const { s, i, l } = ctx, stars = mistakes <= 1 ? 3 : mistakes <= 3 ? 2 : 1;
+    const k = K(), score = scoreFor(mistakes), best = Math.max(scoreOf(l.id), score), record = score > scoreOf(l.id) && !!scoreOf(l.id);
     const first = !starsOf(l.id);
     let sticker = '';
     if (first) {
-      sticker = STICKERS.find(x => !S.stickers.includes(x)) || '';
-      if (sticker) S.stickers.push(sticker);
+      sticker = STICKERS.find(x => !k.stickers.includes(x)) || '';
+      if (sticker) k.stickers.push(sticker);
     }
-    S.stars[l.id] = Math.max(starsOf(l.id), stars); save();
+    k.stars[l.id] = Math.max(starsOf(l.id), stars);
+    k.scores[l.id] = best; k.plays[l.id] = (k.plays[l.id] || 0) + 1;
+    save();
     const hasNext = i + 1 < s.lessons.length;
     app.innerHTML = `
       <main class="result">
@@ -408,6 +486,8 @@
         <div class="r-mascot">🐼</div>
         <h2>Hoan hô ${esc(kid())}!</h2>
         <div class="r-stars">${starRow(stars)}</div>
+        <p class="r-score"><b>${score}</b>/10 điểm</p>
+        <p class="r-total">${record ? 'Kỷ lục mới của bé! · ' : best > score ? `Điểm cao nhất bài này: ${best} · ` : ''}Tổng điểm: 🏅 ${totalScore()}</p>
         ${sticker ? `<p class="r-sticker">Bé nhận được sticker mới <b>${sticker}</b></p>` : ''}
         <div class="col">
           ${hasNext ? '<button class="btn big" id="next">Bài tiếp theo →</button>' : ''}
@@ -424,11 +504,11 @@
 
   function stickerBook() {
     clearScreen();
-    const total = SUBJECTS.reduce((a, s) => a + s.lessons.length, 0);
+    const total = LESSON_COUNT, got = K().stickers;
     app.innerHTML = `
-      <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>🎁 Sticker của bé</h2><div class="total">${S.stickers.length}/${total}</div></header>
+      <header class="bar"><button class="round" id="back" aria-label="Về trang chính">←</button><h2>🎁 Sticker của ${esc(kid())}</h2><div class="total">${got.length}/${total}</div></header>
       <main class="book">
-        ${Array.from({ length: total }, (_, k) => `<span class="st ${S.stickers[k] ? 'on' : ''}">${S.stickers[k] || '?'}</span>`).join('')}
+        ${Array.from({ length: total }, (_, k) => `<span class="st ${got[k] ? 'on' : ''}">${got[k] || '?'}</span>`).join('')}
       </main>
       <p class="note">Học xong mỗi bài mới, bé được thêm một sticker.</p>`;
     $('#back').onclick = home;
@@ -463,7 +543,6 @@
       <main class="parent">
         <section>
           <h3>Cài đặt</h3>
-          <label>Tên gọi của bé <input id="p-name" maxlength="20" value="${esc(S.name)}" placeholder="Ví dụ: Bin"></label>
           <label>Nhắc nghỉ mắt sau
             <select id="p-limit">${[10, 15, 20, 30, 0].map(v => `<option value="${v}" ${S.limit === v ? 'selected' : ''}>${v ? v + ' phút' : 'Không nhắc'}</option>`).join('')}</select>
           </label>
@@ -471,12 +550,38 @@
           <label class="check"><input type="checkbox" id="p-unlock" ${S.unlockAll ? 'checked' : ''}> Mở khoá tất cả bài học</label>
         </section>
         <section>
+          <h3>Hồ sơ các bé</h3>
+          ${S.kids.map(k => `<div class="k-row" data-id="${k.id}">
+            <span class="av">${k.avatar}</span>
+            <input class="k-name" maxlength="20" value="${esc(k.name)}" aria-label="Tên bé">
+            <button class="btn danger sm k-del" aria-label="Xoá hồ sơ ${esc(k.name)}">Xoá</button>
+          </div>`).join('')}
+          <button class="btn ghost" id="k-add">＋ Thêm bé</button>
+        </section>
+        <section>
+          <h3>Bảng điểm</h3>
+          <p>Mỗi bài chấm theo thang 10: mỗi lần chọn sai trừ 1 điểm. Tổng điểm là cộng điểm cao nhất của từng bài (tối đa ${LESSON_COUNT * 10}).</p>
+          <table class="rank">
+            <tr><th>Bé</th><th>Bài đã học</th><th>Sao</th><th>Tổng điểm</th></tr>
+            ${[...S.kids].sort((a, b) => totalScore(b) - totalScore(a)).map(k => `<tr class="${k.id === K().id ? 'cur' : ''}">
+              <td>${k.avatar} ${esc(k.name.trim() || 'Bé')}</td><td>${Object.keys(k.scores).length}/${LESSON_COUNT}</td><td>★ ${totalStars(k)}</td><td><b>${totalScore(k)}</b></td></tr>`).join('')}
+          </table>
+          <h4>Điểm từng bài của ${esc(kid())}</h4>
+          ${SUBJECTS.map(s => `<details>
+            <summary>${s.icon} ${s.title} · ${s.lessons.filter(l => scoreOf(l.id)).length}/${s.lessons.length} bài · ${subjectScore(s)} điểm</summary>
+            <table class="rank">
+              <tr><th>Bài</th><th>Điểm cao nhất</th><th>Số lần học</th></tr>
+              ${s.lessons.map((l, i) => `<tr><td>${i + 1}. ${l.title}</td><td>${scoreOf(l.id) ? `<b>${scoreOf(l.id)}</b>/10` : '–'}</td><td>${K().plays[l.id] || 0}</td></tr>`).join('')}
+            </table>
+          </details>`).join('')}
+        </section>
+        <section>
           <h3>Giọng đọc trên máy này</h3>
           <p>Tiếng Việt và tiếng Anh đều là <b>giọng thu sẵn</b>, máy nào cũng nghe giống nhau.</p>
           <div class="row"><button class="btn ghost" id="t-vi">Thử tiếng Việt</button><button class="btn ghost" id="t-en">Thử tiếng Anh</button></div>
         </section>
         <section>
-          <h3>Tiến độ của bé</h3>
+          <h3>Tiến độ của ${esc(kid())}</h3>
           ${SUBJECTS.map(s => {
             const done = s.lessons.filter(l => starsOf(l.id)).length;
             return `<div class="p-row"><span>${s.icon} ${s.title}</span><span class="p-bar"><i style="width:${Math.round(done / s.lessons.length * 100)}%;background:${s.color}"></i></span><span>${done}/${s.lessons.length} bài · ★ ${subjectStars(s)}</span></div>`;
@@ -484,22 +589,32 @@
         </section>
         <section>
           <h3>Xoá tiến độ</h3>
-          <p>Xoá toàn bộ sao và sticker trên máy này để học lại từ đầu.</p>
+          <p>Xoá toàn bộ sao, điểm và sticker của ${esc(kid())} trên máy này để học lại từ đầu.</p>
           <button class="btn danger" id="p-reset">Xoá tiến độ</button>
         </section>
       </main>`;
     $('#back').onclick = home;
-    $('#p-name').oninput = e => { S.name = e.target.value; save(); };
+    $$('.k-row').forEach(row => {
+      const k = S.kids.find(x => x.id === row.dataset.id);
+      $('.k-name', row).oninput = e => { k.name = e.target.value; save(); };
+      $('.k-del', row).onclick = () => {
+        const m = modal(`<h2>Xoá hồ sơ của ${esc(k.name.trim() || 'bé')}?</h2><p>Toàn bộ sao, điểm và sticker của bé sẽ mất, không khôi phục được.</p>
+          <div class="row"><button class="btn ghost" id="d-no">Giữ lại</button><button class="btn danger" id="d-yes">Xoá</button></div>`);
+        $('#d-no', m).onclick = () => m.remove();
+        $('#d-yes', m).onclick = () => { S.kids = S.kids.filter(x => x !== k); if (S.cur === k.id) S.cur = S.kids[0] ? S.kids[0].id : ''; save(); m.remove(); S.kids.length ? parent() : home(); };
+      };
+    });
+    $('#k-add').onclick = () => kidForm(false);
     $('#p-limit').onchange = e => { S.limit = +e.target.value; playedSec = 0; save(); };
     $('#p-voice').onchange = e => { S.voice = e.target.checked; save(); };
     $('#p-unlock').onchange = e => { S.unlockAll = e.target.checked; save(); };
     $('#t-vi').onclick = () => speak([[SAY.test, 'vi']]);
     $('#t-en').onclick = () => speak([[SAY_EN.test, 'en']]);
     $('#p-reset').onclick = () => {
-      const m = modal(`<h2>Xoá toàn bộ tiến độ?</h2><p>Sao và sticker của bé sẽ mất, không khôi phục được.</p>
+      const m = modal(`<h2>Xoá tiến độ của ${esc(kid())}?</h2><p>Sao, điểm và sticker của bé sẽ mất, không khôi phục được.</p>
         <div class="row"><button class="btn ghost" id="r-no">Giữ lại</button><button class="btn danger" id="r-yes">Xoá</button></div>`);
       $('#r-no', m).onclick = () => m.remove();
-      $('#r-yes', m).onclick = () => { S.stars = {}; S.stickers = []; save(); m.remove(); parent(); };
+      $('#r-yes', m).onclick = () => { Object.assign(K(), { stars: {}, scores: {}, plays: {}, stickers: [] }); save(); m.remove(); parent(); };
     };
   }
 
